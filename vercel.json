@@ -1,0 +1,6 @@
+{
+  "rewrites": [
+    { "source": "/prozess-check/ergebnis/:token", "destination": "/prozess-check/ergebnis/index.html" },
+    { "source": "/admin", "destination": "/admin/index.html" }
+  ]
+}
