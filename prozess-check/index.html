@@ -3,1099 +3,655 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Prozess-Check — PRONECTO</title>
-<meta name="description" content="Kostenloser KI-Prozess-Check für Ihr Unternehmen. In 5 Minuten zu konkreten Automatisierungs-Empfehlungen.">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;1,8..60,400&display=swap" rel="stylesheet">
+<title>Kostenloser Prozess-Check — PRONECTO</title>
+<link rel="stylesheet" href="/css/shared.css">
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: var(--bg); min-height: 100vh; display: flex; flex-direction: column; }
 
-:root {
-  --accent: #E8793A;
-  --accent-soft: rgba(232,121,58,0.08);
-  --accent-mid: rgba(232,121,58,0.18);
-  --navy: #1A1F2E;
-  --bg: #FAFAFA;
-  --white: #FFFFFF;
-  --text: #1A1F2E;
-  --text-secondary: #6B6B6B;
-  --text-muted: #8A8A8A;
-  --border: #E2E2E2;
-  --green: #2E9E6B;
-  --green-soft: rgba(46,158,107,0.08);
-  --font: 'Outfit', -apple-system, sans-serif;
-  --serif: 'Source Serif 4', Georgia, serif;
+#screen-wrap {
+  flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 100px 20px 60px;
 }
+.screen { width: 100%; max-width: 680px; animation: fadeIn 0.35s ease; }
+@keyframes fadeIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
 
-html { -webkit-font-smoothing: antialiased; }
-body { font-family: var(--font); color: var(--text); background: var(--bg); min-height: 100vh; }
-
-/* NAV */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 0 32px; height: 56px;
-  display: flex; align-items: center; justify-content: space-between;
-  background: rgba(250,250,250,0.85);
-  backdrop-filter: saturate(180%) blur(20px);
-  border-bottom: 0.5px solid rgba(0,0,0,0.08);
+#topbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+  padding: 14px 24px; display: flex; align-items: center; justify-content: space-between;
+  background: rgba(250,250,250,0.94); backdrop-filter: blur(8px);
+  border-bottom: 1px solid var(--border);
 }
-.nav-logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-.nav-logo svg { width: 26px; height: 26px; }
-.nav-wordmark { font-size: 1rem; font-weight: 600; color: var(--navy); letter-spacing: 1.5px; text-transform: uppercase; }
-.nav-back { font-size: 0.82rem; color: var(--text-secondary); text-decoration: none; transition: color 0.2s; }
-.nav-back:hover { color: var(--text); }
-
-/* LAYOUT */
-.page { min-height: 100vh; padding-top: 56px; }
-.container { max-width: 680px; margin: 0 auto; padding: 0 24px; }
-
-/* PROGRESS */
-.progress-bar-wrap {
-  position: fixed; top: 56px; left: 0; right: 0; z-index: 99;
-  height: 3px; background: var(--border);
+#back-btn {
+  background: none; border: none; cursor: pointer; color: var(--text-sec);
+  font-size: 0.85rem; display: flex; align-items: center; gap: 6px;
+  font-family: 'Outfit', sans-serif; padding: 6px 0; transition: color 0.2s;
 }
-.progress-bar-fill {
-  height: 100%; background: var(--accent);
-  transition: width 0.5s cubic-bezier(0.25,0.46,0.45,0.94);
-}
+#back-btn:hover { color: var(--navy); }
+#block-indicator { font-size: 0.78rem; color: var(--text-sec); font-weight: 500; }
 
-/* SCREENS */
-.screen { display: none; }
-.screen.active { display: block; }
+.progress-bar-wrap { top: 55px; }
 
-/* START SCREEN */
-.start-screen { padding: 72px 0 80px; }
-.start-badge {
-  display: inline-block;
-  background: var(--accent-soft); color: var(--accent);
-  font-size: 0.78rem; font-weight: 600; letter-spacing: 0.5px;
-  padding: 6px 14px; border-radius: 980px;
-  margin-bottom: 28px;
-}
-.start-screen h1 {
-  font-size: clamp(2rem, 5vw, 2.8rem); font-weight: 700; line-height: 1.15;
-  color: var(--navy); margin-bottom: 20px; letter-spacing: -0.5px;
-}
-.start-screen h1 em { font-family: var(--serif); font-style: italic; font-weight: 400; color: var(--accent); }
-.start-screen p { font-size: 1.05rem; color: var(--text-secondary); line-height: 1.7; margin-bottom: 40px; }
-.start-meta { display: flex; gap: 24px; margin-bottom: 48px; flex-wrap: wrap; }
-.start-meta-item { display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--text-secondary); }
-.start-meta-item svg { width: 16px; height: 16px; stroke: var(--accent); fill: none; }
+/* Intro */
+.intro-hero { text-align: center; padding: 0 0 20px; }
+.intro-logo { display:flex; justify-content:center; margin-bottom:28px; }
+.intro-hero h1 { margin-bottom: 16px; }
+.intro-hero h1 em { font-family: 'Source Serif 4', serif; font-style:italic; }
+.intro-hero p { font-size: 1.05rem; color: var(--text); max-width: 480px; margin: 0 auto 28px; }
+.intro-meta { display: flex; justify-content: center; gap: 20px; margin-bottom: 36px; flex-wrap: wrap; }
+.intro-meta span { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; color: var(--text-sec); }
 
-.branch-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px; }
-.branch-card {
-  border: 1.5px solid var(--border); border-radius: 14px;
-  padding: 20px; cursor: pointer; transition: all 0.2s; background: var(--white);
-  text-align: left;
-}
-.branch-card:hover { border-color: var(--accent); background: var(--accent-soft); }
-.branch-card.selected { border-color: var(--accent); background: var(--accent-soft); }
-.branch-icon { font-size: 1.6rem; margin-bottom: 8px; }
-.branch-name { font-size: 0.95rem; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
-.branch-sub { font-size: 0.78rem; color: var(--text-muted); }
-
-.size-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 40px; }
-.size-card {
-  border: 1.5px solid var(--border); border-radius: 10px;
-  padding: 14px 16px; cursor: pointer; transition: all 0.2s; background: var(--white);
-}
-.size-card:hover { border-color: var(--accent); }
-.size-card.selected { border-color: var(--accent); background: var(--accent-soft); }
-.size-label { font-size: 0.88rem; font-weight: 500; color: var(--navy); }
-.size-sub { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
-
-.section-label { font-size: 0.8rem; font-weight: 600; color: var(--text-muted); letter-spacing: 0.8px; text-transform: uppercase; margin-bottom: 14px; margin-top: 32px; }
-
-.btn-primary {
-  background: var(--navy); color: #fff;
-  border: none; border-radius: 980px;
-  padding: 14px 36px; font-size: 1rem; font-weight: 600; font-family: var(--font);
-  cursor: pointer; transition: opacity 0.2s; letter-spacing: 0.2px;
-}
-.btn-primary:hover { opacity: 0.85; }
-.btn-primary:disabled { opacity: 0.35; cursor: default; }
-
-/* QUESTION SCREEN */
-.question-screen { padding: 52px 0 80px; }
-.block-header { margin-bottom: 36px; }
-.block-badge {
+/* Questions */
+.q-block-tag {
   display: inline-flex; align-items: center; gap: 6px;
-  background: var(--accent-soft); color: var(--accent);
-  font-size: 0.76rem; font-weight: 600; letter-spacing: 0.5px;
-  padding: 5px 12px; border-radius: 980px; margin-bottom: 16px;
+  background: #FFF5EF; color: var(--orange);
+  font-size: 0.73rem; font-weight: 600; padding: 5px 12px;
+  border-radius: 20px; margin-bottom: 16px;
 }
-.block-title { font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
-.block-desc { font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+.q-title { font-size: clamp(1.15rem,2.8vw,1.55rem); font-weight: 700; margin-bottom: 8px; line-height: 1.35; }
+.q-hinweis { background:#F5F5F5; border-radius:var(--r-sm); padding:10px 14px; font-size:0.8rem; color:var(--text-sec); margin-bottom:18px; }
 
-.question-card { margin-bottom: 28px; }
-.question-text { font-size: 0.98rem; font-weight: 500; color: var(--navy); margin-bottom: 14px; line-height: 1.5; }
-.question-number { font-size: 0.76rem; color: var(--text-muted); margin-bottom: 6px; }
-
-.options-list { display: flex; flex-direction: column; gap: 8px; }
+.options { display: flex; flex-direction: column; gap: 10px; }
 .option-btn {
-  width: 100%; text-align: left; padding: 13px 16px;
-  border: 1.5px solid var(--border); border-radius: 10px;
-  background: var(--white); cursor: pointer; transition: all 0.15s;
-  font-family: var(--font); font-size: 0.9rem; color: var(--text); line-height: 1.4;
+  padding: 15px 18px; border: 1.5px solid var(--border); border-radius: var(--r-card);
+  background: var(--white); text-align: left; cursor: pointer;
+  font-family: 'Outfit', sans-serif; font-size: 0.92rem; color: var(--navy);
+  transition: all 0.15s ease; line-height: 1.4;
 }
-.option-btn:hover { border-color: var(--accent); background: var(--accent-soft); }
-.option-btn.selected { border-color: var(--accent); background: var(--accent-soft); color: var(--navy); font-weight: 500; }
-.option-btn.selected::before { content: "✓ "; color: var(--accent); font-weight: 700; }
+.option-btn:hover { border-color: var(--orange); background: #FFF5EF; }
+.option-btn.selected { border-color: var(--orange); background: #FFF5EF; color: var(--orange); font-weight: 600; }
+.option-btn.selected::before { content: '✓  '; }
 
-/* ZWISCHENFAZIT */
-.interim-card {
-  background: var(--green-soft); border: 1.5px solid rgba(46,158,107,0.2);
-  border-radius: 14px; padding: 20px 24px; margin-bottom: 28px;
-}
-.interim-card p { font-size: 0.92rem; color: #1a5e3f; line-height: 1.6; }
-.interim-card strong { font-weight: 600; }
+.multi-hint { font-size: 0.8rem; color: var(--text-sec); margin-bottom: 12px; }
+.actions { display: flex; justify-content: flex-end; margin-top: 18px; }
 
-/* NAV BUTTONS */
-.nav-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: 36px; }
-.btn-back {
-  background: none; border: 1.5px solid var(--border); border-radius: 980px;
-  padding: 11px 24px; font-size: 0.88rem; font-weight: 500; font-family: var(--font);
-  color: var(--text-secondary); cursor: pointer; transition: all 0.2s;
-}
-.btn-back:hover { border-color: var(--text-secondary); color: var(--text); }
-.btn-next {
-  background: var(--navy); color: #fff; border: none; border-radius: 980px;
-  padding: 13px 32px; font-size: 0.95rem; font-weight: 600; font-family: var(--font);
-  cursor: pointer; transition: opacity 0.2s;
-}
-.btn-next:hover { opacity: 0.85; }
-.btn-next:disabled { opacity: 0.3; cursor: default; }
+/* Combi */
+.combi-wrap { display: flex; flex-direction: column; gap: 26px; }
+.combi-part-title { font-size: 1rem; font-weight: 600; color: var(--navy); margin-bottom: 10px; }
+.options-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+@media(max-width:500px){ .options-row{ grid-template-columns:1fr; } }
 
-/* LOADING */
-.loading-screen { padding: 80px 0; text-align: center; }
-.loading-logo { display: flex; justify-content: center; margin-bottom: 32px; }
-.loading-logo svg { width: 52px; height: 52px; }
-.loading-title { font-size: 1.4rem; font-weight: 700; color: var(--navy); margin-bottom: 12px; }
-.loading-subtitle { font-size: 0.95rem; color: var(--text-secondary); margin-bottom: 48px; line-height: 1.6; }
-.loading-steps { text-align: left; max-width: 320px; margin: 0 auto 48px; }
-.loading-step {
-  display: flex; align-items: center; gap: 14px;
-  padding: 12px 0; border-bottom: 1px solid var(--border);
-  font-size: 0.88rem; color: var(--text-muted); transition: color 0.3s;
-}
-.loading-step:last-child { border-bottom: none; }
-.loading-step.done { color: var(--green); }
-.loading-step.active { color: var(--navy); font-weight: 500; }
-.step-dot {
-  width: 20px; height: 20px; border-radius: 50%; flex-shrink: 0;
-  background: var(--border); transition: background 0.3s;
-  display: flex; align-items: center; justify-content: center;
-}
-.loading-step.done .step-dot { background: var(--green); }
-.loading-step.active .step-dot { background: var(--accent); }
-.step-check { display: none; }
-.loading-step.done .step-check { display: block; color: white; font-size: 11px; font-weight: 700; }
-.loading-step.active .step-pulse {
-  width: 8px; height: 8px; border-radius: 50%; background: white;
-  animation: pulse 1s infinite;
-}
-@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+/* Loading */
+.loading-screen { display:flex; flex-direction:column; align-items:center; text-align:center; padding:40px 20px; gap:28px; }
+#loading-msg { font-size:1rem; color:var(--text); min-height:1.5em; animation:fadeIn 0.4s ease; }
 
-@media (max-width: 480px) {
-  .branch-grid { grid-template-columns: 1fr; }
-  .size-grid { grid-template-columns: 1fr 1fr; }
-  .nav { padding: 0 16px; }
-  .container { padding: 0 16px; }
+/* KI Insight */
+.ki-card { background:var(--white); border:1px solid var(--border); border-radius:var(--r-card); padding:26px; margin-bottom:18px; }
+.ki-card-header { display:flex; align-items:center; gap:10px; margin-bottom:18px; }
+.ki-avatar { width:34px;height:34px;background:#FFF5EF;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0; }
+.ki-label { font-size:0.78rem;color:var(--text-sec); }
+.ki-text { font-size:0.93rem;color:var(--text);line-height:1.75;min-height:3em; }
+
+.kennzahl-box { background:#FFF5EF;border-radius:var(--r-card);padding:18px;text-align:center;margin:14px 0; }
+.kennzahl-wert { font-size:2.2rem;font-weight:700;color:var(--orange); }
+.kennzahl-einheit { font-size:0.9rem;color:var(--text-sec);margin-left:4px; }
+.kennzahl-label { font-size:0.78rem;color:var(--text-sec);margin-top:4px; }
+
+.quickwin-box { background:#F0FFF8;border:1px solid #B8E8D0;border-radius:var(--r-sm);padding:14px 16px;margin-top:14px; }
+.quickwin-title { font-size:0.72rem;font-weight:700;color:var(--green);margin-bottom:5px;text-transform:uppercase;letter-spacing:0.05em; }
+.quickwin-text { font-size:0.88rem;color:#1A5C3A;line-height:1.5; }
+
+/* Preview */
+.preview-headline {
+  background: linear-gradient(135deg, var(--navy) 0%, #2A3550 100%);
+  border-radius:var(--r-card);padding:26px;color:white;text-align:center;margin-bottom:22px;
 }
+.preview-headline .big-num { font-size:2.8rem;font-weight:700;color:var(--orange); }
+.preview-headline .big-label { font-size:0.85rem;color:rgba(255,255,255,0.65);margin-bottom:6px; }
+.preview-scores { display:flex;flex-direction:column;gap:9px;margin:18px 0; }
+.preview-bar-row { display:flex;align-items:center;gap:10px; }
+.preview-bar-label { font-size:0.8rem;color:var(--navy);width:210px;flex-shrink:0; }
+.preview-bar-track { flex:1;height:7px;background:var(--border);border-radius:4px;overflow:hidden; }
+.preview-bar-fill { height:100%;border-radius:4px;transition:width 0.8s cubic-bezier(0.4,0,0.2,1); }
+.preview-bar-val { font-size:0.78rem;font-weight:600;width:28px;text-align:right; }
+.preview-teaser { font-size:0.93rem;color:var(--text);line-height:1.7;margin-bottom:24px; }
+
+.email-gate { background:var(--white);border:1px solid var(--border);border-radius:var(--r-card);padding:26px;text-align:center; }
+.email-gate h3 { font-size:1.05rem;margin-bottom:7px; }
+.email-gate p { font-size:0.83rem;color:var(--text-sec);margin-bottom:18px; }
+.email-form { display:flex;gap:10px; }
+.email-form input { flex:1; }
+.email-privacy { font-size:0.73rem;color:var(--text-sec);margin-top:8px; }
+@media(max-width:500px){ .email-form{flex-direction:column;} }
 </style>
 </head>
 <body>
 
-<nav>
-  <a href="/" class="nav-logo">
-    <svg viewBox="0 0 64 64" fill="none">
+<div id="topbar">
+  <button id="back-btn" onclick="prevScreen()">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    Zurück
+  </button>
+  <a href="/" class="logo">
+    <svg viewBox="0 0 64 64" fill="none" width="22" height="22">
       <path d="M8 40 Q20 14 32 14 Q44 14 56 40" stroke="#E8793A" stroke-width="3.5" stroke-linecap="round"/>
-      <path d="M20 40 L20 24.5" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      <path d="M32 40 L32 14" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      <path d="M44 40 L44 24.5" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-      <circle cx="8" cy="40" r="3" fill="#E8793A" opacity="0.4"/>
       <circle cx="56" cy="40" r="3" fill="#E8793A"/>
     </svg>
-    <span class="nav-wordmark">PRONECTO</span>
+    <span class="logo-text" style="font-size:0.88rem">PRONECTO</span>
   </a>
-  <a href="/" class="nav-back">← Zurück zur Website</a>
-</nav>
-
-<div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar" style="width:0%"></div></div>
-
-<div class="page">
-  <div class="container">
-
-    <!-- START SCREEN -->
-    <div class="screen active" id="screen-start">
-      <div class="start-screen">
-        <div class="start-badge">Kostenlos · 5 Minuten · Kein Verkaufsgespräch</div>
-        <h1>Wo verliert Ihr Unternehmen <em>täglich</em> Zeit?</h1>
-        <p>Beantworten Sie 12–15 kurze Fragen. Unsere KI analysiert Ihre Prozesse und zeigt Ihnen konkret, wo Automatisierung sofort Zeit spart.</p>
-        <div class="start-meta">
-          <div class="start-meta-item">
-            <svg viewBox="0 0 24 24" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            Ca. 5 Minuten
-          </div>
-          <div class="start-meta-item">
-            <svg viewBox="0 0 24 24" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-            Keine Registrierung
-          </div>
-          <div class="start-meta-item">
-            <svg viewBox="0 0 24 24" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
-            Sofortige Ergebnisse
-          </div>
-        </div>
-
-        <div class="section-label">Ihre Branche</div>
-        <div class="branch-grid" id="branchGrid">
-          <button class="branch-card" data-branch="handwerk">
-            <div class="branch-icon">🏗️</div>
-            <div class="branch-name">Handwerk</div>
-            <div class="branch-sub">Dachdecker, Maurer, Gerüstbau</div>
-          </button>
-          <button class="branch-card" data-branch="elektro">
-            <div class="branch-icon">⚡</div>
-            <div class="branch-name">Elektrotechnik</div>
-            <div class="branch-sub">Installation, Wartung, Prüfungen</div>
-          </button>
-          <button class="branch-card" data-branch="autohaus">
-            <div class="branch-icon">🚗</div>
-            <div class="branch-name">Autohaus</div>
-            <div class="branch-sub">Verkauf, Werkstatt, Service</div>
-          </button>
-          <button class="branch-card" data-branch="sonstiges">
-            <div class="branch-icon">🏢</div>
-            <div class="branch-name">Andere Branche</div>
-            <div class="branch-sub">Logistik, Produktion, Dienstleistung</div>
-          </button>
-        </div>
-
-        <div class="section-label">Unternehmensgröße</div>
-        <div class="size-grid" id="sizeGrid">
-          <button class="size-card" data-size="1-5">
-            <div class="size-label">1–5 Mitarbeiter</div>
-            <div class="size-sub">Soloselbstständig oder kleines Team</div>
-          </button>
-          <button class="size-card" data-size="6-20">
-            <div class="size-label">6–20 Mitarbeiter</div>
-            <div class="size-sub">Kleiner Betrieb</div>
-          </button>
-          <button class="size-card" data-size="21-100">
-            <div class="size-label">21–100 Mitarbeiter</div>
-            <div class="size-sub">Mittelgroßes Unternehmen</div>
-          </button>
-          <button class="size-card" data-size="100+">
-            <div class="size-label">Über 100 Mitarbeiter</div>
-            <div class="size-sub">Größerer Mittelstand</div>
-          </button>
-        </div>
-
-        <button class="btn-primary" id="btnStart" disabled onclick="startCheck()">
-          Prozess-Check starten →
-        </button>
-      </div>
-    </div>
-
-    <!-- QUESTION SCREEN -->
-    <div class="screen" id="screen-questions">
-      <div class="question-screen" id="questionContent"></div>
-    </div>
-
-    <!-- LOADING SCREEN -->
-    <div class="screen" id="screen-loading">
-      <div class="loading-screen">
-        <div class="loading-logo">
-          <svg viewBox="0 0 64 64" fill="none">
-            <path d="M8 40 Q20 14 32 14 Q44 14 56 40" stroke="#E8793A" stroke-width="3.5" stroke-linecap="round"/>
-            <path d="M20 40 L20 24.5" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-            <path d="M32 40 L32 14" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-            <path d="M44 40 L44 24.5" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
-            <circle cx="8" cy="40" r="3" fill="#E8793A" opacity="0.4"/>
-            <circle cx="56" cy="40" r="3" fill="#E8793A"/>
-          </svg>
-        </div>
-        <div class="loading-title">Ihre Prozesse werden analysiert</div>
-        <div class="loading-subtitle">Unsere KI wertet Ihre Antworten aus und erstellt<br>einen individuellen Automatisierungsplan.</div>
-        <div class="loading-steps" id="loadingSteps">
-          <div class="loading-step" id="step1">
-            <div class="step-dot"><span class="step-check">✓</span><div class="step-pulse"></div></div>
-            Antworten werden ausgewertet
-          </div>
-          <div class="loading-step" id="step2">
-            <div class="step-dot"><span class="step-check">✓</span><div class="step-pulse"></div></div>
-            Verschwendungsanalyse (7 Muda)
-          </div>
-          <div class="loading-step" id="step3">
-            <div class="step-dot"><span class="step-check">✓</span><div class="step-pulse"></div></div>
-            Automatisierungspotenziale berechnen
-          </div>
-          <div class="loading-step" id="step4">
-            <div class="step-dot"><span class="step-check">✓</span><div class="step-pulse"></div></div>
-            Ergebnisbericht erstellen
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
+  <span id="block-indicator"></span>
 </div>
 
-<script>
+<div class="progress-bar-wrap">
+  <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+</div>
+
+<div id="screen-wrap">
+  <div class="screen" id="screen-content"></div>
+</div>
+
+<script type="module">
+import { berechneAlleScores } from '/js/scoring.js';
+
+// ─── QUESTION DATA ───────────────────────────────────────────────────────────
+
 const FRAGEN = {
-  handwerk: [
-    {
-      block: 1,
-      blockTitle: "Kundenanfragen & Kommunikation",
-      blockDesc: "Wie Ihr Betrieb mit neuen Anfragen und Kundenkommunikation umgeht.",
-      fragen: [
-        {
-          id: "h_anfragen_kanal",
-          text: "Wie kommen die meisten Anfragen rein?",
-          optionen: ["Telefon", "WhatsApp", "E-Mail", "Website-Formular", "Mundpropaganda"]
-        },
-        {
-          id: "h_reaktionszeit",
-          text: "Wie schnell antworten Sie auf eine neue Anfrage?",
-          optionen: ["Innerhalb 1 Stunde", "Am selben Tag", "1–3 Tage", "Wenn ich dazu komme"]
-        },
-        {
-          id: "h_terminbestaetigung",
-          text: "Bestätigen Sie Termine schriftlich?",
-          optionen: ["Ja, per WhatsApp oder SMS", "Ja, per E-Mail", "Nur mündlich am Telefon"]
-        }
-      ],
-      interim: (antworten) => {
-        const reaktion = antworten["h_reaktionszeit"];
-        if (reaktion === "1–3 Tage" || reaktion === "Wenn ich dazu komme") {
-          return "Langsame Reaktionszeiten kosten Aufträge. Studien zeigen: Wer innerhalb einer Stunde antwortet, hat 7× höhere Chancen den Auftrag zu bekommen.";
-        }
-        return "Gute Reaktionszeiten. Im nächsten Schritt schauen wir, wie viel Zeit die Angebotserstellung kostet.";
-      }
-    },
-    {
-      block: 2,
-      blockTitle: "Angebotserstellung",
-      blockDesc: "Vom ersten Kundengespräch bis zum fertigen Angebot.",
-      fragen: [
-        {
-          id: "h_angebot_tool",
-          text: "Wie erstellen Sie Ihre Angebote?",
-          optionen: ["Word oder Excel", "Handschriftlich", "Branchensoftware (z.B. openHandwerk)", "Mischung aus allem"]
-        },
-        {
-          id: "h_angebot_dauer",
-          text: "Wie lange brauchen Sie pro Angebot?",
-          optionen: ["Unter 15 Minuten", "15–30 Minuten", "30–60 Minuten", "Über 1 Stunde"]
-        },
-        {
-          id: "h_angebot_anzahl",
-          text: "Wie viele Angebote erstellen Sie pro Woche?",
-          optionen: ["1–3", "4–7", "8–15", "Über 15"]
-        },
-        {
-          id: "h_nachverfolgung",
-          text: "Verfolgen Sie nach, ob ein Angebot angenommen wurde?",
-          optionen: ["Ja, systematisch", "Wenn ich daran denke", "Der Kunde meldet sich schon"]
-        }
-      ],
-      interim: (antworten) => {
-        const dauer = antworten["h_angebot_dauer"];
-        const anzahl = antworten["h_angebot_anzahl"];
-        const dauerwert = { "Unter 15 Minuten": 12, "15–30 Minuten": 22, "30–60 Minuten": 45, "Über 1 Stunde": 75 }[dauer] || 30;
-        const anzahlwert = { "1–3": 2, "4–7": 5, "8–15": 10, "Über 15": 18 }[anzahl] || 5;
-        const stunden = Math.round(dauerwert * anzahlwert / 60 * 10) / 10;
-        return `Bei ${anzahlwert} Angeboten × ${dauerwert} Min investieren Sie ca. <strong>${stunden} Stunden/Woche</strong> allein in die Angebotserstellung — das sind über ${Math.round(stunden * 48)} Stunden pro Jahr.`;
-      }
-    },
-    {
-      block: 3,
-      blockTitle: "Einsatzplanung & Baustelle",
-      blockDesc: "Koordination, Dokumentation und Aufmaße vor Ort.",
-      fragen: [
-        {
-          id: "h_planung_tool",
-          text: "Wie planen Sie Ihre Einsätze?",
-          optionen: ["Wandkalender oder Papier", "Excel", "Google Calendar oder Handy-Kalender", "Branchensoftware"]
-        },
-        {
-          id: "h_baudoku",
-          text: "Wie dokumentieren Sie den Baufortschritt?",
-          optionen: ["Fotos auf dem Handy, unsortiert", "Handschriftliche Berichte", "Software oder App", "Gar nicht systematisch"]
-        },
-        {
-          id: "h_aufmass",
-          text: "Erstellen Sie Aufmaße digital?",
-          optionen: ["Papier und Zollstock", "Fotos mit Notizen", "Digitale App oder Laser"]
-        }
-      ],
-      interim: (antworten) => {
-        const doku = antworten["h_baudoku"];
-        if (doku === "Fotos auf dem Handy, unsortiert" || doku === "Gar nicht systematisch") {
-          return "Fehlende Dokumentation ist ein klassischer Risikofaktor — bei Streitigkeiten mit Kunden fehlen Nachweise. Außerdem kostet nachträgliches Zusammensuchen von Infos viel Zeit.";
-        }
-        return "Dokumentation läuft. Jetzt schauen wir auf die Rechnungsstellung — oft der größte Zeitfresser.";
-      }
-    },
-    {
-      block: 4,
-      blockTitle: "Rechnungen & Verwaltung",
-      blockDesc: "Vom Auftragsabschluss bis zur bezahlten Rechnung.",
-      fragen: [
-        {
-          id: "h_rechnung_tool",
-          text: "Wie erstellen Sie Ihre Rechnungen?",
-          optionen: ["Word oder Excel", "Buchhaltungssoftware (z.B. Lexware, SevDesk)", "Steuerberater macht alles", "Branchensoftware"]
-        },
-        {
-          id: "h_rechnung_tempo",
-          text: "Wie schnell nach Auftragsabschluss geht die Rechnung raus?",
-          optionen: ["Am selben Tag", "Innerhalb einer Woche", "Dauert oft länger", "Sehr unterschiedlich"]
-        },
-        {
-          id: "h_mahnwesen",
-          text: "Haben Sie einen festen Prozess für Mahnungen?",
-          optionen: ["Ja, automatisch", "Ja, aber manuell", "Nein, fällt mir irgendwann auf"]
-        }
-      ],
-      interim: (antworten) => {
-        const tempo = antworten["h_rechnung_tempo"];
-        if (tempo === "Dauert oft länger" || tempo === "Sehr unterschiedlich") {
-          return "Späte Rechnungen bedeuten späte Zahlungen — und schlechteren Cashflow. Automatisierte Rechnungserstellung direkt nach Auftragsabschluss kann das sofort lösen.";
-        }
-        return "Schnelle Rechnungsstellung, gut. Jetzt noch der letzte Block: Kundenbindung.";
-      }
-    },
-    {
-      block: 5,
-      blockTitle: "Kundenbindung",
-      blockDesc: "Google-Bewertungen, Stammkunden, Weiterempfehlungen.",
-      fragen: [
-        {
-          id: "h_bewertungen",
-          text: "Holen Sie aktiv Google-Bewertungen ein?",
-          optionen: ["Ja, regelmäßig", "Manchmal", "Nein", "Wir haben kein Google-Profil"]
-        },
-        {
-          id: "h_nachkontakt",
-          text: "Melden Sie sich nach Projektabschluss nochmal beim Kunden?",
-          optionen: ["Ja, systematisch", "Ab und zu", "Nein"]
-        }
-      ],
-      interim: null
-    }
-  ],
-
-  elektro: [
-    {
-      block: 1,
-      blockTitle: "Auftragsannahme",
-      blockDesc: "Wie neue Aufträge reinkommen und erfasst werden.",
-      fragen: [
-        {
-          id: "e_anfragen_kanal",
-          text: "Wie kommen die meisten Aufträge rein?",
-          optionen: ["Telefonanrufe", "E-Mail", "Stammkunden direkt", "Hausverwaltungen oder Firmen"]
-        },
-        {
-          id: "e_erfassung",
-          text: "Wie erfassen Sie neue Aufträge?",
-          optionen: ["Direkt im System", "Excel oder Liste", "Notizzettel oder Gedächtnis", "E-Mail-Postfach als Ablage"]
-        },
-        {
-          id: "e_reaktionszeit",
-          text: "Wie schnell können Sie auf eine Anfrage reagieren?",
-          optionen: ["Innerhalb weniger Stunden", "Am selben Tag", "1–3 Tage", "Sehr unterschiedlich"]
-        }
-      ],
-      interim: (antworten) => {
-        const erfassung = antworten["e_erfassung"];
-        if (erfassung === "Notizzettel oder Gedächtnis" || erfassung === "E-Mail-Postfach als Ablage") {
-          return "Aufträge die im Postfach oder auf Zetteln verschwinden, gehen oft verloren. Eine zentrale Auftragsliste ist der erste Schritt zu mehr Übersicht.";
-        }
-        return "Gut strukturierte Auftragserfassung. Schauen wir als nächstes auf die Kalkulation.";
-      }
-    },
-    {
-      block: 2,
-      blockTitle: "Angebotskalkulation",
-      blockDesc: "Materialkosten, Arbeitszeit, Sonderposten — wie schnell entsteht ein Angebot?",
-      fragen: [
-        {
-          id: "e_kalkulation_tool",
-          text: "Wie kalkulieren Sie Ihre Angebote?",
-          optionen: ["Excel mit eigenen Formeln", "Branchensoftware (z.B. WinWorker)", "Erfahrungswerte im Kopf", "Mischung aus allem"]
-        },
-        {
-          id: "e_angebot_dauer",
-          text: "Wie lange brauchen Sie für eine Kalkulation?",
-          optionen: ["Unter 15 Minuten", "15–30 Minuten", "30–60 Minuten", "Über 1 Stunde"]
-        },
-        {
-          id: "e_angebot_anzahl",
-          text: "Wie viele Angebote erstellen Sie pro Woche?",
-          optionen: ["1–3", "4–7", "8–15", "Über 15"]
-        }
-      ],
-      interim: (antworten) => {
-        const dauer = antworten["e_angebot_dauer"];
-        const anzahl = antworten["e_angebot_anzahl"];
-        const dauerwert = { "Unter 15 Minuten": 12, "15–30 Minuten": 22, "30–60 Minuten": 45, "Über 1 Stunde": 75 }[dauer] || 30;
-        const anzahlwert = { "1–3": 2, "4–7": 5, "8–15": 10, "Über 15": 18 }[anzahl] || 5;
-        const stunden = Math.round(dauerwert * anzahlwert / 60 * 10) / 10;
-        return `${anzahlwert} Angebote × ${dauerwert} Min = ca. <strong>${stunden} Stunden/Woche</strong> allein für Kalkulationen.`;
-      }
-    },
-    {
-      block: 3,
-      blockTitle: "Prüfprotokolle & Dokumentation",
-      blockDesc: "DGUV V3, E-Checks, Messberichte — wie werden diese erstellt und abgelegt?",
-      fragen: [
-        {
-          id: "e_protokolle_tool",
-          text: "Wie erstellen Sie Prüfprotokolle (DGUV V3, E-Check)?",
-          optionen: ["Papierformular", "Word oder Excel", "Spezielle Software", "App auf dem Tablet"]
-        },
-        {
-          id: "e_ablage",
-          text: "Wo werden Prüfprotokolle abgelegt?",
-          optionen: ["Ordner im Büro", "Server in Ordnerstruktur", "Cloud oder DMS", "Verschiedene Orte"]
-        },
-        {
-          id: "e_pruefungen_anzahl",
-          text: "Wie viele Prüfungen führen Sie pro Monat durch?",
-          optionen: ["Unter 10", "10–30", "30–100", "Über 100"]
-        }
-      ],
-      interim: (antworten) => {
-        const tool = antworten["e_protokolle_tool"];
-        const anzahl = antworten["e_pruefungen_anzahl"];
-        if (tool === "Papierformular" || tool === "Word oder Excel") {
-          const anzahlwert = { "Unter 10": 5, "10–30": 20, "30–100": 65, "Über 100": 120 }[anzahl] || 20;
-          return `Bei ${anzahlwert} Prüfungen/Monat auf Papier oder in Word: das sind viele Stunden für Erfassung, Ablage und Suche — alles automatisierbar.`;
-        }
-        return "Gute digitale Protokollierung. Jetzt schauen wir auf Material und Bestellung.";
-      }
-    },
-    {
-      block: 4,
-      blockTitle: "Material & Bestellung",
-      blockDesc: "Lagerbestand, Bestellprozess, fehlende Teile auf der Baustelle.",
-      fragen: [
-        {
-          id: "e_bestellung",
-          text: "Wie bestellen Sie Material?",
-          optionen: ["Telefonisch beim Großhändler", "Online-Shop", "Branchensoftware", "Jemand fährt spontan hin"]
-        },
-        {
-          id: "e_lager",
-          text: "Haben Sie Übersicht über Ihren Materialbestand?",
-          optionen: ["Ja, digital", "Im Kopf", "Nur grob", "Nicht wirklich"]
-        },
-        {
-          id: "e_fehlteile",
-          text: "Wie oft fehlt Material auf der Baustelle?",
-          optionen: ["Selten", "Ab und zu", "Regelmäßig", "Häufig"]
-        }
-      ],
-      interim: (antworten) => {
-        const fehlteile = antworten["e_fehlteile"];
-        if (fehlteile === "Regelmäßig" || fehlteile === "Häufig") {
-          return "Fehlteile auf der Baustelle kosten im Schnitt 30–60 Minuten pro Vorfall — für Fahrt, Warten, Verzögerung. Das summiert sich schnell auf mehrere Stunden pro Woche.";
-        }
-        return "Materialversorgung läuft gut. Letzter Block: Zeiterfassung und Abrechnung.";
-      }
-    },
-    {
-      block: 5,
-      blockTitle: "Zeiterfassung & Abrechnung",
-      blockDesc: "Wie Techniker Stunden erfassen und wie schnell Rechnungen rausgehen.",
-      fragen: [
-        {
-          id: "e_zeiterfassung",
-          text: "Wie erfassen Ihre Techniker Arbeitszeit?",
-          optionen: ["Stundenzettel auf Papier", "Excel", "App", "Branchensoftware"]
-        },
-        {
-          id: "e_rechnung_tempo",
-          text: "Wie lange dauert es von Auftragsabschluss bis Rechnung?",
-          optionen: ["Gleicher Tag", "Innerhalb einer Woche", "Dauert oft länger", "Sehr unterschiedlich"]
-        }
-      ],
-      interim: null
-    }
-  ],
-
-  autohaus: [
-    {
-      block: 1,
-      blockTitle: "Lead-Management",
-      blockDesc: "Woher Interessenten kommen und wie sie erfasst werden.",
-      fragen: [
-        {
-          id: "a_leads_kanal",
-          text: "Woher kommen die meisten Kaufinteressenten?",
-          optionen: ["Laufkundschaft", "AutoScout24 oder mobile.de", "Website", "Social Media", "Empfehlungen"]
-        },
-        {
-          id: "a_leads_erfassung",
-          text: "Wie erfassen Sie neue Interessenten?",
-          optionen: ["DMS-System", "Excel", "CRM-System", "Notizen oder Gedächtnis"]
-        },
-        {
-          id: "a_leads_reaktion",
-          text: "Wie schnell kontaktieren Sie einen neuen Online-Lead?",
-          optionen: ["Innerhalb 1 Stunde", "Am selben Tag", "1–3 Tage", "Wenn Zeit ist"]
-        }
-      ],
-      interim: (antworten) => {
-        const reaktion = antworten["a_leads_reaktion"];
-        if (reaktion === "1–3 Tage" || reaktion === "Wenn Zeit ist") {
-          return "Online-Leads werden kalt — wer nicht innerhalb einer Stunde reagiert, verliert den Interessenten oft an ein anderes Haus. Das ist messbarer Umsatzverlust.";
-        }
-        return "Schnelle Reaktion auf Leads — gut. Jetzt schauen wir auf den Nachverfolgungsprozess.";
-      }
-    },
-    {
-      block: 2,
-      blockTitle: "Nachverfolgung & Verkauf",
-      blockDesc: "Wie konsequent Interessenten bis zum Abschluss begleitet werden.",
-      fragen: [
-        {
-          id: "a_followup",
-          text: "Haben Sie einen festen Follow-up-Prozess?",
-          optionen: ["Ja, mit festen Schritten", "Grob, aber nicht konsequent", "Jeder Verkäufer macht es anders", "Nicht wirklich"]
-        },
-        {
-          id: "a_verlust",
-          text: "Wie viele Anfragen gehen schätzungsweise verloren?",
-          optionen: ["Fast keine", "Einige wenige", "Wahrscheinlich etliche", "Keine Ahnung"]
-        },
-        {
-          id: "a_gespraeche",
-          text: "Wie viele Probefahrten oder Verkaufsgespräche pro Woche?",
-          optionen: ["1–3", "4–8", "9–15", "Über 15"]
-        }
-      ],
-      interim: (antworten) => {
-        const verlust = antworten["a_verlust"];
-        if (verlust === "Wahrscheinlich etliche" || verlust === "Keine Ahnung") {
-          return "Leads die 'irgendwo' verloren gehen, sind das teuerste Problem im Autohaus. Ein strukturiertes CRM mit automatischen Follow-up-Reminders kostet kaum etwas und rettet nachweislich Abschlüsse.";
-        }
-        return "Follow-up läuft strukturiert. Jetzt zur Fahrzeugverwaltung.";
-      }
-    },
-    {
-      block: 3,
-      blockTitle: "Fahrzeugverwaltung & Inserate",
-      blockDesc: "Bestand aktuell halten, Inserate pflegen, Plattformen bespielen.",
-      fragen: [
-        {
-          id: "a_inserate_pflege",
-          text: "Wie pflegen Sie Ihre Online-Inserate?",
-          optionen: ["Manuell auf jeder Plattform", "Zentrale Software", "Macht ein Mitarbeiter nebenbei", "Nicht regelmäßig"]
-        },
-        {
-          id: "a_inserate_dauer",
-          text: "Wie lange dauert es, ein Fahrzeug komplett zu inserieren?",
-          optionen: ["Unter 30 Minuten", "30–60 Minuten", "1–2 Stunden", "Über 2 Stunden"]
-        },
-        {
-          id: "a_inserate_aktuell",
-          text: "Sind Ihre Inserate immer aktuell?",
-          optionen: ["Ja, immer", "Meistens", "Oft veraltet", "Keine richtige Übersicht"]
-        }
-      ],
-      interim: (antworten) => {
-        const dauer = antworten["a_inserate_dauer"];
-        const dauerwert = { "Unter 30 Minuten": 20, "30–60 Minuten": 45, "1–2 Stunden": 90, "Über 2 Stunden": 150 }[dauer] || 45;
-        return `${dauerwert} Minuten pro Fahrzeug für Inserate — bei 10 Neuzugängen/Monat sind das ${Math.round(dauerwert * 10 / 60 * 10) / 10} Stunden reiner Erfassungsaufwand.`;
-      }
-    },
-    {
-      block: 4,
-      blockTitle: "Werkstatt & Service",
-      blockDesc: "Terminvergabe, Aufträge, Teilebestellung.",
-      fragen: [
-        {
-          id: "a_werkstatt_termine",
-          text: "Wie vergeben Sie Werkstatttermine?",
-          optionen: ["Nur Telefon", "Online-Buchung", "Beides", "Kunden kommen einfach vorbei"]
-        },
-        {
-          id: "a_erinnerungen",
-          text: "Erinnern Sie Kunden aktiv an TÜV, Inspektion, Reifenwechsel?",
-          optionen: ["Ja, systematisch", "Ab und zu", "Nein", "Wollten wir immer schon machen"]
-        },
-        {
-          id: "a_werkstattauftrag",
-          text: "Wie erstellen Sie Werkstattaufträge?",
-          optionen: ["DMS-System", "Papier", "Mischung aus beidem", "Andere Software"]
-        }
-      ],
-      interim: (antworten) => {
-        const erinnerungen = antworten["a_erinnerungen"];
-        if (erinnerungen === "Nein" || erinnerungen === "Wollten wir immer schon machen") {
-          return "Automatische Service-Erinnerungen sind der einfachste Weg, Bestandskunden ins Haus zu holen — ohne Kaltakquise. Ein einmaliger Setup bringt dauerhaft Werkstattauslastung.";
-        }
-        return "Service-Erinnerungen laufen — das ist ein echter Wettbewerbsvorteil. Letzter Block: Kundenbindung.";
-      }
-    },
-    {
-      block: 5,
-      blockTitle: "Kundenbindung",
-      blockDesc: "Wie Bestandskunden gepflegt und reaktiviert werden.",
-      fragen: [
-        {
-          id: "a_nachkontakt",
-          text: "Kontaktieren Sie Kunden nach dem Kauf nochmal?",
-          optionen: ["Ja, nach festem Plan", "Gelegentlich", "Nur bei Reklamationen", "Nein"]
-        },
-        {
-          id: "a_newsletter",
-          text: "Nutzen Sie Newsletter oder Aktionen für Bestandskunden?",
-          optionen: ["Ja, regelmäßig", "Selten", "Nein", "Hatten wir vor"]
-        }
-      ],
-      interim: null
-    }
-  ],
-
-  sonstiges: [
-    {
-      block: 1,
-      blockTitle: "Kundenanfragen & Erstreaktion",
-      blockDesc: "Wie Ihr Unternehmen auf neue Anfragen reagiert.",
-      fragen: [
-        {
-          id: "s_anfragen_kanal",
-          text: "Wie kommen die meisten Anfragen rein?",
-          optionen: ["Telefon", "E-Mail", "Website-Formular", "Persönlich / Netzwerk"]
-        },
-        {
-          id: "s_reaktionszeit",
-          text: "Wie schnell reagieren Sie auf neue Anfragen?",
-          optionen: ["Innerhalb 1 Stunde", "Am selben Tag", "1–3 Tage", "Wenn Zeit ist"]
-        },
-        {
-          id: "s_erfassung",
-          text: "Wie werden Anfragen intern erfasst?",
-          optionen: ["CRM-System", "E-Mail-Postfach", "Excel oder Liste", "Im Kopf / Zettel"]
-        }
-      ],
-      interim: (antworten) => {
-        const erfassung = antworten["s_erfassung"];
-        if (erfassung === "Im Kopf / Zettel" || erfassung === "E-Mail-Postfach") {
-          return "Anfragen die im Postfach oder im Kopf verwaltet werden, gehen regelmäßig verloren — das ist messbar entgangener Umsatz.";
-        }
-        return "Anfragen sind strukturiert erfasst. Jetzt schauen wir auf den Angebotsprozess.";
-      }
-    },
-    {
-      block: 2,
-      blockTitle: "Angebots- & Auftragsprozess",
-      blockDesc: "Vom Erstkontakt bis zum unterschriebenen Auftrag.",
-      fragen: [
-        {
-          id: "s_angebot_tool",
-          text: "Wie erstellen Sie Angebote?",
-          optionen: ["Word oder Excel", "Branchensoftware / ERP", "CRM-System", "Mischung aus allem"]
-        },
-        {
-          id: "s_angebot_dauer",
-          text: "Wie lange dauert ein Angebot?",
-          optionen: ["Unter 15 Minuten", "15–30 Minuten", "30–60 Minuten", "Über 1 Stunde"]
-        },
-        {
-          id: "s_angebot_nachverfolgung",
-          text: "Wie verfolgen Sie offene Angebote nach?",
-          optionen: ["Systematisch mit Erinnerungen", "Manuell wenn ich dran denke", "Der Kunde meldet sich", "Kaum"]
-        }
-      ],
-      interim: (antworten) => {
-        const dauer = antworten["s_angebot_dauer"];
-        const dauerwert = { "Unter 15 Minuten": 12, "15–30 Minuten": 22, "30–60 Minuten": 45, "Über 1 Stunde": 75 }[dauer] || 30;
-        return `Bei ${dauerwert} Minuten pro Angebot und z.B. 5 Angeboten/Woche: <strong>${Math.round(dauerwert * 5 / 60 * 10) / 10} Stunden/Woche</strong> für Angebote.`;
-      }
-    },
-    {
-      block: 3,
-      blockTitle: "Interne Kommunikation",
-      blockDesc: "E-Mails, Meetings, Informationswege im Team.",
-      fragen: [
-        {
-          id: "s_kommunikation_tool",
-          text: "Wie kommuniziert Ihr Team intern hauptsächlich?",
-          optionen: ["E-Mail", "WhatsApp oder Messenger", "Projektmanagement-Tool", "Mündlich / Meetings"]
-        },
-        {
-          id: "s_infoverlust",
-          text: "Gehen wichtige Informationen intern manchmal verloren?",
-          optionen: ["Selten", "Ab und zu", "Regelmäßig", "Das ist ein echtes Problem"]
-        },
-        {
-          id: "s_meetings",
-          text: "Wie viele Stunden verbringen Sie pro Woche in Meetings?",
-          optionen: ["Unter 2 Stunden", "2–5 Stunden", "5–10 Stunden", "Über 10 Stunden"]
-        }
-      ],
-      interim: (antworten) => {
-        const meetings = antworten["s_meetings"];
-        if (meetings === "5–10 Stunden" || meetings === "Über 10 Stunden") {
-          return "Viele Meetings sind ein Zeichen für fehlende asynchrone Kommunikationsstrukturen. Mit den richtigen Tools lassen sich 30–50% der Meeting-Zeit durch klare Dokumentation und automatische Updates einsparen.";
-        }
-        return "Meeting-Aufwand im normalen Bereich. Jetzt schauen wir auf Dokumentation und Berichte.";
-      }
-    },
-    {
-      block: 4,
-      blockTitle: "Dokumentation & Berichte",
-      blockDesc: "Berichte, Protokolle, Reports — manuell oder automatisiert?",
-      fragen: [
-        {
-          id: "s_berichte_tool",
-          text: "Wie erstellen Sie interne Berichte oder Statusupdates?",
-          optionen: ["Manuell in Word oder PowerPoint", "Excel-Auswertungen", "Automatisiert aus einem System", "Gar nicht systematisch"]
-        },
-        {
-          id: "s_berichte_frequenz",
-          text: "Wie oft werden Berichte erstellt?",
-          optionen: ["Täglich", "Wöchentlich", "Monatlich", "Bei Bedarf"]
-        },
-        {
-          id: "s_daten_quellen",
-          text: "Aus wie vielen verschiedenen Systemen kommen Ihre Daten?",
-          optionen: ["Einem System", "2–3 Systemen", "4–6 Systemen", "Zu vielen um sie zu zählen"]
-        }
-      ],
-      interim: (antworten) => {
-        const quellen = antworten["s_daten_quellen"];
-        if (quellen === "4–6 Systemen" || quellen === "Zu vielen um sie zu zählen") {
-          return "Viele Datenquellen bedeuten manuelles Zusammenführen — einer der häufigsten Zeitfresser im Mittelstand. Automatisierte Schnittstellen können das auf Knopfdruck lösen.";
-        }
-        return "Überschaubare Systemlandschaft. Letzter Block: Rechnungsstellung.";
-      }
-    },
-    {
-      block: 5,
-      blockTitle: "Rechnungsstellung & Buchhaltung",
-      blockDesc: "Vom Auftragsabschluss bis zur bezahlten Rechnung.",
-      fragen: [
-        {
-          id: "s_rechnung_tool",
-          text: "Wie erstellen Sie Rechnungen?",
-          optionen: ["Word oder Excel", "Buchhaltungssoftware (z.B. Lexware, SevDesk)", "ERP-System", "Steuerberater macht alles"]
-        },
-        {
-          id: "s_rechnung_tempo",
-          text: "Wie schnell geht die Rechnung nach Abschluss raus?",
-          optionen: ["Am selben Tag", "Innerhalb einer Woche", "Dauert oft länger", "Sehr unterschiedlich"]
-        }
-      ],
-      interim: null
-    }
-  ]
+  E1: {
+    type:'single', frage:'In welcher Branche sind Sie tätig?',
+    optionen:[
+      {label:'Handwerk (Dachdecker, Maurer, Gerüstbau, etc.)',value:'handwerk'},
+      {label:'Elektrotechnik (Installation, Wartung, Prüfungen)',value:'elektro'},
+      {label:'Autohaus (Verkauf, Werkstatt, Service)',value:'autohaus'},
+      {label:'Andere Branche',value:'andere'},
+    ],
+  },
+  E2:{
+    type:'single',frage:'Wie viele Mitarbeiter hat Ihr Unternehmen?',
+    optionen:[
+      {label:'1–10 Mitarbeiter',value:'xs',multiplikator:1.0},
+      {label:'11–30 Mitarbeiter',value:'s',multiplikator:2.5},
+      {label:'31–100 Mitarbeiter',value:'m',multiplikator:6.0},
+      {label:'Über 100 Mitarbeiter',value:'l',multiplikator:12.0},
+    ],
+  },
+  E3:{
+    type:'multi',max:3,frage:'Wo verbringen Sie die meiste Zeit mit Verwaltungsarbeit?',
+    subtext:'Bis zu 3 Bereiche wählen',
+    hinweis:'Die Lean-Methodik unterscheidet 7 Verschwendungsarten in Geschäftsprozessen. Wir prüfen jeden dieser Bereiche auf Optimierungspotenzial.',
+    optionen:[
+      {label:'Kundenanfragen beantworten & Termine koordinieren',block:'B1'},
+      {label:'Angebote schreiben & kalkulieren',block:'B2'},
+      {label:'Aufträge planen & dokumentieren',block:'B3'},
+      {label:'Rechnungen schreiben & Zahlungen nachhalten',block:'B4'},
+      {label:'Kunden nachfassen & Bewertungen einholen',block:'B5'},
+    ],
+  },
+  E4:{
+    type:'multi',max:5,frage:'Welche digitalen Werkzeuge nutzen Sie bereits?',
+    subtext:'Mehrfachauswahl möglich',
+    optionen:[
+      {label:'Smartphones/Tablets für Mitarbeiter',punkte:20},
+      {label:'Cloud-Speicher (Google Drive, Dropbox etc.)',punkte:20},
+      {label:'E-Mail für geschäftliche Kommunikation',punkte:10},
+      {label:'Branchensoftware oder ERP-System',punkte:30},
+      {label:'Wir arbeiten überwiegend mit Papier und Telefon',punkte:0},
+    ],
+  },
+  B1_1:{type:'single',block:1,frage:'Wie werden Kundenanfragen bei Ihnen erfasst und bearbeitet?',
+    optionen:[
+      {label:'Telefon/mündlich, nichts wird notiert',reifegrad:1,muda:['M1','M5'],score:10},
+      {label:'Notizen, Zettel oder Gedächtnis',reifegrad:1,muda:['M1','M5','M6'],score:15},
+      {label:'E-Mail-Postfach oder WhatsApp',reifegrad:2,muda:['M1'],score:35},
+      {label:'Excel-Liste oder einfache Tabelle',reifegrad:2,muda:['M1','M6'],score:30},
+      {label:'Zentrales System (CRM, Software, Ticketsystem)',reifegrad:4,muda:[],score:80},
+    ],
+  },
+  B1_2:{type:'single',block:1,frage:'Wie schnell antworten Sie normalerweise auf eine neue Anfrage?',
+    optionen:[
+      {label:'Innerhalb 1 Stunde',reifegrad:4,muda:[],score:90},
+      {label:'Am selben Tag',reifegrad:3,muda:['M4'],score:60},
+      {label:'1–3 Tage',reifegrad:2,muda:['M4'],score:30},
+      {label:'Wenn ich dazu komme',reifegrad:1,muda:['M4','M5'],score:10},
+    ],
+  },
+  B1_3:{type:'combi',block:1,teile:[
+    {id:'B1_3a',frage:'Wie viele Anfragen erhalten Sie pro Woche?',
+      optionen:[{label:'1–5',wert:3},{label:'6–15',wert:10},{label:'16–30',wert:23},{label:'Über 30',wert:40}]},
+    {id:'B1_3b',frage:'Wie oft geht davon eine unter?',
+      optionen:[
+        {label:'Praktisch nie',reifegrad:4,muda:[],score:90},
+        {label:'Selten, vielleicht 1× im Monat',reifegrad:3,muda:['M5'],score:60},
+        {label:'Ab und zu',reifegrad:2,muda:['M5','M4'],score:30},
+        {label:'Kommt öfter vor als mir lieb ist',reifegrad:1,muda:['M5','M7'],score:10},
+      ]},
+  ]},
+  B2_1:{type:'single',block:2,frage:'Wie erstellen Sie Ihre Angebote oder Kalkulationen?',
+    optionen:[
+      {label:'Handschriftlich oder rein mündlich',reifegrad:1,muda:['M5','M6'],score:5},
+      {label:'Word, Excel oder freie Vorlagen',reifegrad:2,muda:['M1','M6'],score:25},
+      {label:'Mischung aus verschiedenen Wegen',reifegrad:2,muda:['M1','M6'],score:20},
+      {label:'Branchensoftware mit Vorlagen',reifegrad:4,muda:[],score:75},
+      {label:'Software mit Artikelstamm, direkt aus Kalkulation',reifegrad:5,muda:[],score:90},
+    ],
+  },
+  B2_2:{type:'combi',block:2,teile:[
+    {id:'B2_2a',frage:'Wie viele Angebote schreiben Sie pro Woche?',
+      optionen:[{label:'1–3',wert:2},{label:'4–7',wert:5.5},{label:'8–15',wert:11},{label:'Über 15',wert:20}]},
+    {id:'B2_2b',frage:'Wie lange brauchen Sie pro Stück?',
+      optionen:[
+        {label:'Unter 15 Minuten',wert:10,score:90},
+        {label:'15–30 Minuten',wert:22,score:65},
+        {label:'30–60 Minuten',wert:45,score:35},
+        {label:'Über 1 Stunde',wert:75,score:10},
+      ]},
+  ]},
+  B2_3:{type:'combi',block:2,teile:[
+    {id:'B2_3a',frage:'Verfolgen Sie nach, ob Angebote angenommen wurden?',
+      optionen:[
+        {label:'Der Kunde meldet sich schon',reifegrad:1,muda:['M7'],score:10},
+        {label:'Wenn ich dran denke',reifegrad:2,muda:['M4'],score:25},
+        {label:'Ja, aber manuell',reifegrad:3,muda:['M6'],score:55},
+        {label:'Ja, systematisch per Software',reifegrad:4,muda:[],score:85},
+      ]},
+    {id:'B2_3b',frage:'Wie oft müssen Angebote korrigiert werden?',
+      optionen:[
+        {label:'Fast nie',reifegrad:4,muda:[],score:90},
+        {label:'Selten',reifegrad:3,muda:['M5'],score:65},
+        {label:'Ab und zu',reifegrad:2,muda:['M5','M6'],score:35},
+        {label:'Häufig',reifegrad:1,muda:['M5','M6','M4'],score:10},
+      ]},
+  ]},
+  B3_1:{type:'single',block:3,frage:'Wie planen und koordinieren Sie Ihre Aufträge, Einsätze oder Termine?',
+    optionen:[
+      {label:'Wandkalender, Papier oder im Kopf',reifegrad:1,muda:['M1','M2'],score:10},
+      {label:'Excel oder einfache Liste',reifegrad:2,muda:['M1'],score:30},
+      {label:'Handy-Kalender (Google, Apple)',reifegrad:2,muda:['M1'],score:40},
+      {label:'Geteilter Kalender oder Planungstool',reifegrad:3,muda:[],score:65},
+      {label:'Branchensoftware mit Ressourcenplanung',reifegrad:4,muda:[],score:85},
+    ],
+  },
+  B3_2:{type:'single',block:3,frage:'Wie dokumentieren Sie die Arbeit (Fortschritt, Protokolle, Berichte)?',
+    optionen:[
+      {label:'Gar nicht systematisch',reifegrad:1,muda:['M5'],score:5},
+      {label:'Fotos auf dem Handy, unsortiert',reifegrad:1,muda:['M3','M6'],score:20},
+      {label:'Handschriftlich oder Word-Berichte',reifegrad:2,muda:['M1','M6'],score:30},
+      {label:'App oder Software, teilweise',reifegrad:3,muda:[],score:60},
+      {label:'Durchgängig digital',reifegrad:4,muda:[],score:85},
+    ],
+  },
+  B3_3:{type:'single',block:3,frage:'Wie oft fehlen Mitarbeitern vor Ort Informationen, sodass sie nachfragen müssen?',
+    optionen:[
+      {label:'Fast täglich',reifegrad:1,muda:['M2','M4','M6'],score:10},
+      {label:'Mehrmals pro Woche',reifegrad:2,muda:['M2','M4'],score:30},
+      {label:'Selten, vielleicht 1× pro Woche',reifegrad:3,muda:['M2'],score:65},
+      {label:'Praktisch nie',reifegrad:4,muda:[],score:90},
+    ],
+  },
+  B4_1:{type:'single',block:4,frage:'Wie erstellen Sie Ihre Rechnungen — und wie nahtlos läuft das ab?',
+    optionen:[
+      {label:'Word/Excel, jede Rechnung von Hand',reifegrad:2,muda:['M1','M6'],score:20},
+      {label:'Steuerberater macht alles',reifegrad:1,muda:['M1','M4'],score:15},
+      {label:'Buchhaltungssoftware, aber Daten manuell übertragen',reifegrad:3,muda:['M1','M6'],score:45},
+      {label:'Software, durchgängig vom Angebot zur Rechnung',reifegrad:4,muda:[],score:85},
+    ],
+  },
+  B4_2:{type:'combi',block:4,teile:[
+    {id:'B4_2a',frage:'Wie viele Rechnungen schreiben Sie pro Monat?',
+      optionen:[{label:'1–10',wert:5},{label:'11–30',wert:20},{label:'31–60',wert:45},{label:'Über 60',wert:80}]},
+    {id:'B4_2b',frage:'Wie schnell nach Auftragsabschluss?',
+      optionen:[
+        {label:'Am selben Tag',reifegrad:4,muda:[],score:90},
+        {label:'Innerhalb einer Woche',reifegrad:3,muda:['M4'],score:55},
+        {label:'Dauert oft länger als eine Woche',reifegrad:2,muda:['M4'],score:20},
+        {label:'Sehr unterschiedlich',reifegrad:1,muda:['M4','M6'],score:10},
+      ]},
+  ]},
+  B4_3:{type:'combi',block:4,teile:[
+    {id:'B4_3a',frage:'Haben Sie einen festen Mahnprozess?',
+      optionen:[
+        {label:'Nein, fällt mir irgendwann auf',reifegrad:1,muda:['M4','M5'],score:10},
+        {label:'Ja, aber manuell',reifegrad:2,muda:['M6'],score:40},
+        {label:'Ja, automatisch über Software',reifegrad:4,muda:[],score:90},
+      ]},
+    {id:'B4_3b',frage:'Wie oft stimmen Rechnungen nicht auf Anhieb?',
+      optionen:[
+        {label:'Praktisch nie',reifegrad:4,muda:[],score:90},
+        {label:'Selten',reifegrad:3,muda:['M5'],score:65},
+        {label:'Ab und zu',reifegrad:2,muda:['M5','M6'],score:30},
+        {label:'Häufig',reifegrad:1,muda:['M5','M6','M4'],score:10},
+      ]},
+  ]},
+  B5_1:{type:'single',block:5,frage:'Melden Sie sich nach Auftragsabschluss nochmal beim Kunden?',
+    optionen:[
+      {label:'Nein',reifegrad:1,muda:['M7'],score:10},
+      {label:'Ab und zu, wenn es sich ergibt',reifegrad:2,muda:['M4'],score:30},
+      {label:'Ja, aber nicht systematisch',reifegrad:3,muda:['M6'],score:50},
+      {label:'Ja, nach festem Ablauf',reifegrad:4,muda:[],score:85},
+    ],
+  },
+  B5_2:{type:'single',block:5,frage:'Holen Sie aktiv Kundenbewertungen ein (Google, Portale etc.)?',
+    optionen:[
+      {label:'Wir haben kein Online-Profil',reifegrad:1,muda:[],score:5},
+      {label:'Nein',reifegrad:1,muda:[],score:15},
+      {label:'Manchmal',reifegrad:2,muda:['M6'],score:40},
+      {label:'Ja, regelmäßig und mit System',reifegrad:4,muda:[],score:85},
+    ],
+  },
+  B5_3:{type:'single',block:5,frage:'Wie viele Aufträge schließen Sie ungefähr pro Monat ab?',
+    optionen:[
+      {label:'1–5',wert:3},{label:'6–15',wert:10},{label:'16–30',wert:23},{label:'Über 30',wert:40},
+    ],
+  },
 };
 
-// STATE
-let state = {
-  branche: null,
-  groesse: null,
-  antworten: {},
-  currentBlock: 0,
-  currentFragen: []
+const BLOCK_INFO={1:{titel:'Kundenanfragen & Erstreaktion',icon:'📞'},2:{titel:'Angebote & Kalkulation',icon:'📋'},3:{titel:'Auftragsabwicklung',icon:'🔧'},4:{titel:'Rechnungen & Zahlungen',icon:'💶'},5:{titel:'Kundenbindung',icon:'⭐'}};
+const LOADING_MSGS=['Verschwendungsanalyse wird berechnet…','Branchenbenchmark wird ermittelt…','Antworten werden nach der Lean-Methodik ausgewertet…','Durchlaufzeiteffizienz wird berechnet…','Optimierungspotenzial wird identifiziert…'];
+
+// ─── SCREEN FLOW ─────────────────────────────────────────────────────────────
+
+const SCREENS=[
+  {id:'intro',type:'intro'},
+  {id:'E1',type:'question',qid:'E1'},
+  {id:'E2',type:'question',qid:'E2'},
+  {id:'E3',type:'question',qid:'E3'},
+  {id:'E4',type:'question',qid:'E4'},
+  {id:'B1_1',type:'question',qid:'B1_1',block:1},{id:'B1_2',type:'question',qid:'B1_2',block:1},{id:'B1_3',type:'question',qid:'B1_3',block:1},
+  {id:'load_b1n',type:'loading',block:1,api:'nachfrage'},{id:'ki_b1n',type:'ki_nachfrage',block:1},
+  {id:'load_b1i',type:'loading',block:1,api:'insight'},{id:'ki_b1i',type:'ki_insight',block:1},
+  {id:'B2_1',type:'question',qid:'B2_1',block:2},{id:'B2_2',type:'question',qid:'B2_2',block:2},{id:'B2_3',type:'question',qid:'B2_3',block:2},
+  {id:'load_b2n',type:'loading',block:2,api:'nachfrage'},{id:'ki_b2n',type:'ki_nachfrage',block:2},
+  {id:'load_b2i',type:'loading',block:2,api:'insight'},{id:'ki_b2i',type:'ki_insight',block:2},
+  {id:'B3_1',type:'question',qid:'B3_1',block:3},{id:'B3_2',type:'question',qid:'B3_2',block:3},{id:'B3_3',type:'question',qid:'B3_3',block:3},
+  {id:'load_b3n',type:'loading',block:3,api:'nachfrage'},{id:'ki_b3n',type:'ki_nachfrage',block:3},
+  {id:'load_b3i',type:'loading',block:3,api:'insight'},{id:'ki_b3i',type:'ki_insight',block:3},
+  {id:'B4_1',type:'question',qid:'B4_1',block:4},{id:'B4_2',type:'question',qid:'B4_2',block:4},{id:'B4_3',type:'question',qid:'B4_3',block:4},
+  {id:'load_b4n',type:'loading',block:4,api:'nachfrage'},{id:'ki_b4n',type:'ki_nachfrage',block:4},
+  {id:'load_b4i',type:'loading',block:4,api:'insight'},{id:'ki_b4i',type:'ki_insight',block:4},
+  {id:'B5_1',type:'question',qid:'B5_1',block:5},{id:'B5_2',type:'question',qid:'B5_2',block:5},{id:'B5_3',type:'question',qid:'B5_3',block:5},
+  {id:'load_b5n',type:'loading',block:5,api:'nachfrage'},{id:'ki_b5n',type:'ki_nachfrage',block:5},
+  {id:'load_b5i',type:'loading',block:5,api:'insight'},{id:'ki_b5i',type:'ki_insight',block:5},
+  {id:'load_analyse',type:'loading',api:'analyse'},
+  {id:'preview',type:'preview'},
+];
+
+// ─── STATE ───────────────────────────────────────────────────────────────────
+
+const state={idx:0,answers:{},kiNachfragen:{},kiNachfrageAnswers:{},kiInsights:{},kiAnalyse:null,scores:null};
+
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+
+const getEinstieg=()=>({
+  branche:state.answers.E1?.value||'andere',
+  mitarbeiter:state.answers.E2?.value||'xs',
+  multiplikator:state.answers.E2?.multiplikator||1.0,
+  schwerpunkte:(state.answers.E3||[]).map(o=>o.block),
+  digitalPunkte:(state.answers.E4||[]).reduce((s,o)=>s+(o.punkte||0),0),
+});
+
+const getBlockAntworten=b=>Object.entries(state.answers)
+  .filter(([k])=>k.startsWith(`B${b}_`))
+  .flatMap(([,v])=>Array.isArray(v)?v:[v])
+  .filter(Boolean);
+
+function updateUI(){
+  const s=SCREENS[state.idx];
+  document.getElementById('progress-fill').style.width=Math.round(state.idx/(SCREENS.length-1)*100)+'%';
+  document.getElementById('back-btn').style.visibility=state.idx>0?'visible':'hidden';
+  document.getElementById('block-indicator').textContent=s.block?`Block ${s.block}/5`:'';
+}
+
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+
+function render(){
+  const s=SCREENS[state.idx];
+  updateUI();
+  const html={
+    intro:renderIntro,question:renderQuestion,loading:renderLoading,
+    ki_nachfrage:renderKiNachfrage,ki_insight:renderKiInsight,preview:renderPreview,
+  }[s.type];
+  document.getElementById('screen-content').innerHTML=html?html(s):'';
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(s.type==='loading')triggerLoading(s);
+  if(s.type==='ki_insight')triggerTypewriter(s.block);
+}
+
+function renderIntro(){
+  return `<div class="intro-hero">
+    <div class="intro-logo">
+      <svg viewBox="0 0 64 64" fill="none" width="52" height="52">
+        <path d="M8 40 Q20 14 32 14 Q44 14 56 40" stroke="#E8793A" stroke-width="3.5" stroke-linecap="round"/>
+        <path d="M20 40 L20 24.5" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+        <path d="M32 40 L32 14" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+        <path d="M44 40 L44 24.5" stroke="#E8793A" stroke-width="1.5" stroke-linecap="round" opacity="0.3"/>
+        <circle cx="8" cy="40" r="3" fill="#E8793A" opacity="0.4"/>
+        <circle cx="56" cy="40" r="3" fill="#E8793A"/>
+      </svg>
+    </div>
+    <h1>Finden Sie in 5 Minuten heraus,<br><em>wo Ihr Betrieb Zeit verliert.</em></h1>
+    <p>Unser KI-gestützter Prozess-Check analysiert Ihre Abläufe nach der Lean-Methodik und liefert einen konkreten Maßnahmenplan.</p>
+    <div class="intro-meta">
+      <span>⏱ Ca. 5 Minuten</span>
+      <span>🔒 Kostenlos & unverbindlich</span>
+      <span>✓ Kein Account nötig</span>
+    </div>
+    <button class="btn btn-primary btn-lg" onclick="nextScreen()">Kostenlose Analyse starten →</button>
+  </div>`;
+}
+
+function renderQuestion(s){
+  const q=FRAGEN[s.qid];
+  if(!q)return '';
+  if(q.type==='combi')return renderCombi(s,q);
+  if(q.type==='multi')return renderMulti(s,q);
+  const tag=s.block?`<div class="q-block-tag">${BLOCK_INFO[s.block].icon} Block ${s.block}/5 — ${BLOCK_INFO[s.block].titel}</div>`:'';
+  const sel=state.answers[s.qid];
+  const opts=q.optionen.map((o,i)=>`<button class="option-btn${sel?.label===o.label?' selected':''}" onclick="selOpt('${s.qid}',${i})">${o.label}</button>`).join('');
+  const hint=q.hinweis?`<div class="q-hinweis">${q.hinweis}</div>`:'';
+  return `${tag}<div class="q-title">${q.frage}</div>${hint}<div class="options">${opts}</div>`;
+}
+
+function renderMulti(s,q){
+  const sel=state.answers[s.qid]||[];
+  const sels=sel.map(o=>o.label);
+  const opts=q.optionen.map((o,i)=>`<button class="option-btn${sels.includes(o.label)?' selected':''}" onclick="toggleMulti('${s.qid}',${i},${q.max||99})">${o.label}</button>`).join('');
+  return `<div class="q-title">${q.frage}</div>
+    <div class="multi-hint">${q.subtext||''}</div>
+    ${q.hinweis?`<div class="q-hinweis">${q.hinweis}</div>`:''}
+    <div class="options">${opts}</div>
+    <div class="actions"><button class="btn btn-primary" onclick="nextScreen()" ${sel.length?'':'disabled'}>Weiter →</button></div>`;
+}
+
+function renderCombi(s,q){
+  const tag=s.block?`<div class="q-block-tag">${BLOCK_INFO[s.block].icon} Block ${s.block}/5 — ${BLOCK_INFO[s.block].titel}</div>`:'';
+  const parts=q.teile.map(t=>{
+    const sel=state.answers[t.id];
+    const row=t.optionen.length<=4;
+    const opts=t.optionen.map((o,i)=>`<button class="option-btn${sel?.label===o.label?' selected':''}" onclick="selOpt('${t.id}',${i},true)">${o.label}</button>`).join('');
+    return `<div><div class="combi-part-title">${t.frage}</div><div class="${row?'options-row':'options'}">${opts}</div></div>`;
+  }).join('');
+  const done=q.teile.every(t=>state.answers[t.id]);
+  return `${tag}<div class="combi-wrap">${parts}</div>
+    <div class="actions" style="margin-top:22px"><button class="btn btn-primary" onclick="nextScreen()" ${done?'':'disabled'}>Weiter →</button></div>`;
+}
+
+function renderLoading(){
+  return `<div class="loading-screen"><div class="spinner"></div><p id="loading-msg">${LOADING_MSGS[0]}</p></div>`;
+}
+
+function renderKiNachfrage(s){
+  const ki=state.kiNachfragen[s.block];
+  if(!ki)return `<div class="loading-screen"><div class="spinner"></div><p>Lade Frage…</p></div>`;
+  const sel=state.kiNachfrageAnswers[s.block];
+  const opts=ki.optionen.map((o,i)=>`<button class="option-btn${sel?.label===o?' selected':''}" onclick="selKiNach(${s.block},${i})">${o}</button>`).join('');
+  return `<div class="q-block-tag">${BLOCK_INFO[s.block].icon} Vertiefungsfrage — Block ${s.block}</div>
+    <div class="q-title">${ki.frage}</div>
+    <div class="options" style="margin-bottom:18px">${opts}</div>
+    <div class="actions"><button class="btn btn-primary" onclick="nextScreen()" ${sel?'':'disabled'}>Weiter →</button></div>`;
+}
+
+function renderKiInsight(s){
+  const ki=state.kiInsights[s.block];
+  if(!ki)return `<div class="loading-screen"><div class="spinner"></div><p>Lade Ergebnis…</p></div>`;
+  return `<div class="ki-card">
+    <div class="ki-card-header">
+      <div class="ki-avatar"><svg viewBox="0 0 64 64" fill="none" width="18" height="18"><path d="M8 40 Q20 14 32 14 Q44 14 56 40" stroke="#E8793A" stroke-width="3.5" stroke-linecap="round"/><circle cx="56" cy="40" r="3" fill="#E8793A"/></svg></div>
+      <div><div style="font-weight:600;font-size:0.88rem">PRONECTO Analyse</div><div class="ki-label">Block ${s.block}/5 — ${BLOCK_INFO[s.block].titel}</div></div>
+    </div>
+    <p class="ki-text" id="ki-text-${s.block}"></p>
+    ${ki.kennzahl?`<div class="kennzahl-box"><div><span class="kennzahl-wert">${ki.kennzahl.wert}</span><span class="kennzahl-einheit"> ${ki.kennzahl.einheit}</span></div><div class="kennzahl-label">${ki.kennzahl.label}</div></div>`:''}
+    ${ki.quick_win?`<div class="quickwin-box"><div class="quickwin-title">✓ Quick Win — sofort umsetzbar</div><div class="quickwin-text">${ki.quick_win}</div></div>`:''}
+  </div>
+  <div style="text-align:center;margin-top:18px">
+    <button class="btn btn-primary" onclick="nextScreen()">${s.block<5?'Weiter zu Block '+(s.block+1)+' →':'Zur Gesamtauswertung →'}</button>
+  </div>`;
+}
+
+function renderPreview(){
+  const s=state.scores;const ki=state.kiAnalyse;
+  if(!s||!ki)return `<div class="loading-screen"><div class="spinner"></div><p>Lade Auswertung…</p></div>`;
+  const bars=Object.entries(s.handlungsbedarf).sort(([,a],[,b])=>b-a).map(([b,v])=>{
+    const c=v>=70?'var(--red)':v>=40?'var(--yellow)':'var(--green)';
+    return `<div class="preview-bar-row">
+      <div class="preview-bar-label">${BLOCK_INFO[b].icon} ${BLOCK_INFO[b].titel}</div>
+      <div class="preview-bar-track"><div class="preview-bar-fill" style="width:${v}%;background:${c}"></div></div>
+      <div class="preview-bar-val" style="color:${c}">${v}</div>
+    </div>`;
+  }).join('');
+  return `<div style="text-align:center;margin-bottom:18px">
+    <div class="q-block-tag" style="justify-content:center">✓ Analyse abgeschlossen</div>
+    <h2>Ihre Prozess-Analyse ist fertig</h2>
+  </div>
+  <div class="preview-headline">
+    <div class="big-label">Geschätzter Zeitverlust pro Woche</div>
+    <div class="big-num">${s.zeitverlustGesamt.toFixed(1)} <span style="font-size:1.3rem;font-weight:400">h</span></div>
+    <div style="font-size:0.82rem;color:rgba(255,255,255,0.6);margin-top:6px">entspricht ca. ${Math.round(s.kostenJahr).toLocaleString('de-DE')} € pro Jahr</div>
+  </div>
+  <div class="section-header"><h3>Handlungsbedarf nach Bereichen</h3><p style="font-size:0.8rem">Basierend auf strategischer Bedeutung, Verbesserungswürdigkeit und -fähigkeit</p></div>
+  <div class="preview-scores">${bars}</div>
+  <p class="preview-teaser">${ki.teaser}</p>
+  <div class="email-gate">
+    <h3>Ihren vollständigen Maßnahmenplan erhalten</h3>
+    <p>Muda-Profil, Reifegrad-Auswertung und Top-3-Maßnahmenplan — kostenlos als PDF.</p>
+    <div class="email-form">
+      <input type="email" id="email-input" placeholder="ihre@email.de" />
+      <button class="btn btn-primary" onclick="submitEmail()">Meinen Plan erhalten →</button>
+    </div>
+    <p class="email-privacy">Keine Werbung, kein Abo. Nur Ihr persönliches Ergebnis.</p>
+  </div>`;
+}
+
+// ─── INTERACTIONS ─────────────────────────────────────────────────────────────
+
+window.selOpt=function(qid,idx,isCombi=false){
+  const q=FRAGEN[qid]||(Object.values(FRAGEN).find(f=>f.teile?.some(t=>t.id===qid))?.teile.find(t=>t.id===qid));
+  const opts=q?.optionen||q?.optionen;
+  if(!opts)return;
+  state.answers[qid]=opts[idx];
+  if(!isCombi)setTimeout(()=>nextScreen(),250);
+  else render();
 };
 
-// INIT
-document.querySelectorAll('.branch-card').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.branch-card').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    state.branche = btn.dataset.branch;
-    checkStartEnabled();
-  });
-});
+window.toggleMulti=function(qid,idx,max){
+  const opts=FRAGEN[qid]?.optionen;if(!opts)return;
+  const cur=state.answers[qid]||[];
+  const opt=opts[idx];
+  const already=cur.find(o=>o.label===opt.label);
+  state.answers[qid]=already?cur.filter(o=>o.label!==opt.label):(cur.length<max?[...cur,opt]:cur);
+  render();
+};
 
-document.querySelectorAll('.size-card').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.size-card').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-    state.groesse = btn.dataset.size;
-    checkStartEnabled();
-  });
-});
+window.selKiNach=function(block,idx){
+  const ki=state.kiNachfragen[block];if(!ki)return;
+  const label=ki.optionen[idx];
+  const muda=(ki.muda_mapping&&ki.muda_mapping[idx])||[];
+  const score=(ki.scoring&&ki.scoring[idx])||50;
+  state.kiNachfrageAnswers[block]={label,muda,score};
+  render();
+};
 
-function checkStartEnabled() {
-  document.getElementById('btnStart').disabled = !(state.branche && state.groesse);
+window.nextScreen=function(){
+  if(state.idx<SCREENS.length-1){state.idx++;render();}
+};
+
+window.prevScreen=function(){
+  if(state.idx<=0)return;
+  state.idx--;
+  const s=SCREENS[state.idx];
+  if(s.type==='loading'||s.type==='ki_insight'||s.type==='ki_nachfrage'){state.idx--;}
+  render();
+};
+
+// ─── API CALLS ───────────────────────────────────────────────────────────────
+
+async function triggerLoading(s){
+  let mi=0;
+  const el=()=>document.getElementById('loading-msg');
+  const t=setInterval(()=>{mi=(mi+1)%LOADING_MSGS.length;if(el())el().textContent=LOADING_MSGS[mi];},1800);
+  try{
+    if(s.api==='nachfrage')await callKiNachfrage(s.block);
+    else if(s.api==='insight')await callKiInsight(s.block);
+    else if(s.api==='analyse')await callKiAnalyse();
+  }catch(e){console.error('API:',e);}
+  clearInterval(t);
+  nextScreen();
 }
 
-function updateProgress(pct) {
-  document.getElementById('progressBar').style.width = pct + '%';
+async function callKiNachfrage(block){
+  const e=getEinstieg();
+  const r=await fetch('/api/ki-nachfrage',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({branche:e.branche,mitarbeiter:e.mitarbeiter,schwerpunkte:e.schwerpunkte,
+      ausstattung:state.answers.E4||[],blockNr:block,blockAntworten:getBlockAntworten(block)})});
+  state.kiNachfragen[block]=await r.json();
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById('screen-' + id).classList.add('active');
-  window.scrollTo(0, 0);
+async function callKiInsight(block){
+  const e=getEinstieg();
+  const sc=berechneAlleScores(state.answers,e);state.scores=sc;
+  const r=await fetch('/api/ki-insight',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({branche:e.branche,mitarbeiter:e.mitarbeiter,blockNr:block,
+      blockTitel:BLOCK_INFO[block].titel,blockAntworten:getBlockAntworten(block),
+      kiNachfrageAntwort:state.kiNachfrageAnswers[block],blockScore:sc.blockScores[block],
+      zeitverlust:sc.zeitverluste[block]})});
+  state.kiInsights[block]=await r.json();
 }
 
-function startCheck() {
-  state.currentFragen = FRAGEN[state.branche];
-  state.currentBlock = 0;
-  showScreen('questions');
-  renderBlock(0);
-  updateProgress(5);
+async function callKiAnalyse(){
+  const e=getEinstieg();
+  const sc=berechneAlleScores(state.answers,e);state.scores=sc;
+  const r=await fetch('/api/ki-analyse',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({branche:e.branche,mitarbeiter:e.mitarbeiter,schwerpunkte:e.schwerpunkte,
+      ausstattung:state.answers.E4||[],alleAntworten:state.answers,scores:sc,
+      kiInsights:state.kiInsights,zeitverlustGesamt:sc.zeitverlustGesamt,kostenJahr:sc.kostenJahr})});
+  state.kiAnalyse=await r.json();
 }
 
-function renderBlock(blockIdx) {
-  const block = state.currentFragen[blockIdx];
-  const totalBlocks = state.currentFragen.length;
-  const pct = Math.round((blockIdx / totalBlocks) * 85) + 5;
-  updateProgress(pct);
+// ─── TYPEWRITER ───────────────────────────────────────────────────────────────
 
-  let html = `
-    <div class="block-header">
-      <div class="block-badge">Block ${block.block} von ${totalBlocks}</div>
-      <div class="block-title">${block.blockTitle}</div>
-      <div class="block-desc">${block.blockDesc}</div>
-    </div>
-  `;
+function triggerTypewriter(block){
+  const ki=state.kiInsights[block];if(!ki)return;
+  const el=document.getElementById(`ki-text-${block}`);if(!el)return;
+  const text=ki.insight_text||'';let i=0;el.textContent='';
+  const iv=setInterval(()=>{
+    el.textContent+=text[i]||'';i++;
+    if(i>=text.length)clearInterval(iv);
+  },26);
+}
 
-  block.fragen.forEach((frage, fi) => {
-    const qnum = Object.values(state.currentFragen.slice(0, blockIdx)).reduce((acc, b) => acc + b.fragen.length, 0) + fi + 1;
-    const totalQ = state.currentFragen.reduce((acc, b) => acc + b.fragen.length, 0);
-    html += `
-      <div class="question-card">
-        <div class="question-number">Frage ${qnum} von ${totalQ}</div>
-        <div class="question-text">${frage.text}</div>
-        <div class="options-list" id="options-${frage.id}">
-          ${frage.optionen.map(opt => `
-            <button class="option-btn ${state.antworten[frage.id] === opt ? 'selected' : ''}"
-              onclick="selectOption('${frage.id}', this, '${opt.replace(/'/g, "\\'")}')">
-              ${opt}
-            </button>
-          `).join('')}
-        </div>
-      </div>
-    `;
-  });
+// ─── EMAIL SUBMIT ─────────────────────────────────────────────────────────────
 
-  // Zwischenfazit wenn vorhanden
-  const prevInterimKey = `interim_${blockIdx}`;
-  if (state[prevInterimKey]) {
-    html += `<div class="interim-card"><p>${state[prevInterimKey]}</p></div>`;
+window.submitEmail=async function(){
+  const email=document.getElementById('email-input')?.value?.trim();
+  if(!email||!email.includes('@'))return;
+  const btn=document.querySelector('.email-gate .btn-primary');
+  if(btn){btn.disabled=true;btn.textContent='Wird gespeichert…';}
+  try{
+    const e=getEinstieg();
+    const sc=state.scores||berechneAlleScores(state.answers,e);
+    const sr=await fetch('/api/lead/save',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({branche:e.branche,unternehmensgroesse:e.mitarbeiter,antworten:state.answers,
+        scores:sc.blockScores,zeitverlust_woche:sc.zeitverlustGesamt,kosten_jahr:sc.kostenJahr,
+        muda_profil:sc.mudaProfil,reifegrade:sc.reifegrade,ki_insights:state.kiInsights,ki_analyse:state.kiAnalyse})});
+    const {token}=await sr.json();
+    await fetch('/api/lead/save-email',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({token,email})});
+    window.location.href=`/prozess-check/ergebnis/${token}`;
+  }catch(err){
+    console.error(err);
+    if(btn){btn.disabled=false;btn.textContent='Meinen Plan erhalten →';}
   }
+};
 
-  const isLast = blockIdx === totalBlocks - 1;
-  const allAnswered = block.fragen.every(f => state.antworten[f.id]);
-
-  html += `
-    <div class="nav-buttons">
-      ${blockIdx > 0
-        ? `<button class="btn-back" onclick="prevBlock()">← Zurück</button>`
-        : `<button class="btn-back" onclick="showScreen('start')">← Zurück</button>`
-      }
-      <button class="btn-next" id="btnNext" onclick="nextBlock()" ${allAnswered ? '' : 'disabled'}>
-        ${isLast ? 'Analyse starten →' : 'Weiter →'}
-      </button>
-    </div>
-  `;
-
-  document.getElementById('questionContent').innerHTML = html;
-  window.scrollTo(0, 0);
-}
-
-function selectOption(frageId, btn, wert) {
-  state.antworten[frageId] = wert;
-  const container = document.getElementById('options-' + frageId);
-  container.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
-  btn.classList.add('selected');
-
-  const block = state.currentFragen[state.currentBlock];
-  const allAnswered = block.fragen.every(f => state.antworten[f.id]);
-  const btnNext = document.getElementById('btnNext');
-  if (btnNext) btnNext.disabled = !allAnswered;
-}
-
-function nextBlock() {
-  const block = state.currentFragen[state.currentBlock];
-  if (block.interim) {
-    state[`interim_${state.currentBlock + 1}`] = block.interim(state.antworten);
-  }
-
-  if (state.currentBlock < state.currentFragen.length - 1) {
-    state.currentBlock++;
-    renderBlock(state.currentBlock);
-  } else {
-    startAnalysis();
-  }
-}
-
-function prevBlock() {
-  if (state.currentBlock > 0) {
-    state.currentBlock--;
-    renderBlock(state.currentBlock);
-  }
-}
-
-async function startAnalysis() {
-  showScreen('loading');
-  updateProgress(90);
-
-  const steps = ['step1', 'step2', 'step3', 'step4'];
-  let stepIdx = 0;
-
-  function activateStep(i) {
-    steps.forEach((id, j) => {
-      const el = document.getElementById(id);
-      el.classList.remove('active', 'done');
-      if (j < i) el.classList.add('done');
-      if (j === i) el.classList.add('active');
-    });
-  }
-
-  activateStep(0);
-
-  const timer = setInterval(() => {
-    stepIdx++;
-    if (stepIdx < steps.length) activateStep(stepIdx);
-  }, 1800);
-
-  try {
-    const response = await fetch('/api/analyse', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        branche: state.branche,
-        groesse: state.groesse,
-        antworten: state.antworten
-      })
-    });
-
-    clearInterval(timer);
-    steps.forEach(id => document.getElementById(id).classList.add('done'));
-    document.getElementById('progressBar').style.width = '100%';
-
-    if (!response.ok) throw new Error('API-Fehler');
-    const data = await response.json();
-
-    await new Promise(r => setTimeout(r, 600));
-    window.location.href = '/prozess-check/ergebnis/' + data.token;
-  } catch (err) {
-    clearInterval(timer);
-    document.getElementById('questionContent').innerHTML = `
-      <div style="padding:60px 0;text-align:center;">
-        <div style="font-size:2rem;margin-bottom:16px;">⚠️</div>
-        <div style="font-size:1.1rem;font-weight:600;color:#1A1F2E;margin-bottom:8px;">Analyse nicht verfügbar</div>
-        <div style="font-size:0.9rem;color:#6B6B6B;margin-bottom:32px;">Bitte versuchen Sie es später erneut oder kontaktieren Sie uns direkt.</div>
-        <a href="mailto:hallo@pronecto.de" style="background:#1A1F2E;color:#fff;padding:12px 28px;border-radius:980px;text-decoration:none;font-size:0.9rem;font-weight:600;">
-          Kontakt aufnehmen
-        </a>
-      </div>
-    `;
-    showScreen('questions');
-  }
-}
+// ─── INIT ─────────────────────────────────────────────────────────────────────
+render();
 </script>
 </body>
 </html>
