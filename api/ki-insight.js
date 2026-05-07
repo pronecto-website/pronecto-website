@@ -26,21 +26,22 @@ TONALITÄT:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { branche, mitarbeiter, schwerpunkte, ausstattung, blockNr, blockTitel, blockAntworten, kiNachfrageAntwort, blockScore, zeitverlust } = req.body;
+  const { branche, mitarbeiter, schwerpunkte, ausstattung, blockNr, blockTitel, blockAntworten, kiNachfrageAntwort, blockScore, zeitverlust, E0_freitext, blockFreitext } = req.body;
   if (!branche || !blockNr || !blockAntworten) return res.status(400).json({ error: 'Fehlende Parameter' });
 
   const branchenkontext = getBranchenkontext(branche);
 
   const userPrompt = `KONTEXT DES LEADS:
-- Branche: ${branche}
-- Mitarbeiter: ${mitarbeiter}
+- Betriebsgröße: ${mitarbeiter}
 - Block ${blockNr}: ${blockTitel}
 - Block-Antworten: ${JSON.stringify(blockAntworten)}
 - KI-Nachfrage-Antwort: ${JSON.stringify(kiNachfrageAntwort)}
 - Berechneter Block-Score: ${blockScore}/100
 - Geschätzter Zeitverlust in diesem Block: ${zeitverlust ? zeitverlust.toFixed(1) + 'h/Woche' : 'nicht berechenbar'}
+${E0_freitext ? `\nHauptproblem des Leads (O-Ton): "${E0_freitext}"` : ''}
+${blockFreitext ? `\nKonkrete Situation in diesem Block (O-Ton): "${blockFreitext}"` : ''}
 
-BRANCHENSPEZIFISCHES VOKABULAR:
+BRANCHENSPEZIFISCHES VOKABULAR (nur als Orientierung):
 ${branchenkontext}
 
 AUFGABE: Generiere ein Zwischenfazit (3-4 Sätze) und einen Quick-Win für Block ${blockNr}.
@@ -48,6 +49,10 @@ Das Insight soll ZUERST den Verlust benennen, DANN das Potenzial.
 Enthalte eine konkrete Zahl (Zeitverlust, Stunden, Fehlerquote).
 Verwende einen Fachbegriff und erkläre ihn kurz.
 Der Quick-Win muss SOFORT umsetzbar sein, auch ohne PRONECTO.
+
+WICHTIG:
+${blockFreitext ? `- Der Lead hat beschrieben: "${blockFreitext}". Beziehe dich darauf im insight_text (z.B. "Sie haben beschrieben, dass..." oder "Genau das bestätigen Ihre Antworten:").` : '- Spiegle die persönliche Situation des Leads wider, nicht eine generische Branchensituation.'}
+- Kein Satz darf so klingen, als könnte er für jeden gelten.
 
 Antworte NUR als gültiges JSON ohne Markdown:
 {"insight_text":"...","quick_win":"...","kennzahl":{"label":"Zeitverlust pro Woche","wert":"4,5","einheit":"Stunden"},"dominante_muda":["M4","M6"]}`;

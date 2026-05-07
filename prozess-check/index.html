@@ -166,7 +166,7 @@ const FRAGEN = {
   E3:{
     type:'multi',max:3,frage:'Wo verbringen Sie die meiste Zeit mit Verwaltungsarbeit?',
     subtext:'Bis zu 3 Bereiche wählen',
-    hinweis:'Die Lean-Methodik unterscheidet 7 Verschwendungsarten in Geschäftsprozessen. Wir prüfen jeden dieser Bereiche auf Optimierungspotenzial.',
+    hinweis:'In jedem Betrieb gibt es typische Zeitfresser. Wir prüfen systematisch alle fünf Bereiche auf Optimierungspotenzial.',
     optionen:[
       {label:'Kundenanfragen beantworten & Termine koordinieren',block:'B1'},
       {label:'Angebote schreiben & kalkulieren',block:'B2'},
@@ -334,7 +334,7 @@ const FRAGEN = {
 };
 
 const BLOCK_INFO={1:{titel:'Kundenanfragen & Erstreaktion',icon:'📞'},2:{titel:'Angebote & Kalkulation',icon:'📋'},3:{titel:'Auftragsabwicklung',icon:'🔧'},4:{titel:'Rechnungen & Zahlungen',icon:'💶'},5:{titel:'Kundenbindung',icon:'⭐'}};
-const LOADING_MSGS=['Verschwendungsanalyse wird berechnet…','Branchenbenchmark wird ermittelt…','Antworten werden nach der Lean-Methodik ausgewertet…','Durchlaufzeiteffizienz wird berechnet…','Optimierungspotenzial wird identifiziert…'];
+const LOADING_MSGS=['Ihre Antworten werden analysiert…','Muster werden erkannt…','Zeitverluste werden berechnet…','Produktivitätsanteil wird bestimmt…','Optimierungspotenzial wird identifiziert…'];
 
 // ─── SCREEN FLOW ─────────────────────────────────────────────────────────────
 
@@ -344,19 +344,25 @@ const SCREENS=[
   {id:'E2',type:'question',qid:'E2'},
   {id:'E3',type:'question',qid:'E3'},
   {id:'E4',type:'question',qid:'E4'},
+  {id:'ft_e0',type:'freitext',ftype:'E0'},
   {id:'B1_1',type:'question',qid:'B1_1',block:1},{id:'B1_2',type:'question',qid:'B1_2',block:1},{id:'B1_3',type:'question',qid:'B1_3',block:1},
+  {id:'ft_b1',type:'freitext',ftype:'B1'},
   {id:'load_b1n',type:'loading',block:1,api:'nachfrage'},{id:'ki_b1n',type:'ki_nachfrage',block:1},
   {id:'load_b1i',type:'loading',block:1,api:'insight'},{id:'ki_b1i',type:'ki_insight',block:1},
   {id:'B2_1',type:'question',qid:'B2_1',block:2},{id:'B2_2',type:'question',qid:'B2_2',block:2},{id:'B2_3',type:'question',qid:'B2_3',block:2},
+  {id:'ft_b2',type:'freitext',ftype:'B2'},
   {id:'load_b2n',type:'loading',block:2,api:'nachfrage'},{id:'ki_b2n',type:'ki_nachfrage',block:2},
   {id:'load_b2i',type:'loading',block:2,api:'insight'},{id:'ki_b2i',type:'ki_insight',block:2},
   {id:'B3_1',type:'question',qid:'B3_1',block:3},{id:'B3_2',type:'question',qid:'B3_2',block:3},{id:'B3_3',type:'question',qid:'B3_3',block:3},
+  {id:'ft_b3',type:'freitext',ftype:'B3'},
   {id:'load_b3n',type:'loading',block:3,api:'nachfrage'},{id:'ki_b3n',type:'ki_nachfrage',block:3},
   {id:'load_b3i',type:'loading',block:3,api:'insight'},{id:'ki_b3i',type:'ki_insight',block:3},
   {id:'B4_1',type:'question',qid:'B4_1',block:4},{id:'B4_2',type:'question',qid:'B4_2',block:4},{id:'B4_3',type:'question',qid:'B4_3',block:4},
+  {id:'ft_b4',type:'freitext',ftype:'B4'},
   {id:'load_b4n',type:'loading',block:4,api:'nachfrage'},{id:'ki_b4n',type:'ki_nachfrage',block:4},
   {id:'load_b4i',type:'loading',block:4,api:'insight'},{id:'ki_b4i',type:'ki_insight',block:4},
   {id:'B5_1',type:'question',qid:'B5_1',block:5},{id:'B5_2',type:'question',qid:'B5_2',block:5},{id:'B5_3',type:'question',qid:'B5_3',block:5},
+  {id:'ft_b5',type:'freitext',ftype:'B5'},
   {id:'load_b5n',type:'loading',block:5,api:'nachfrage'},{id:'ki_b5n',type:'ki_nachfrage',block:5},
   {id:'load_b5i',type:'loading',block:5,api:'insight'},{id:'ki_b5i',type:'ki_insight',block:5},
   {id:'load_analyse',type:'loading',api:'analyse'},
@@ -397,6 +403,7 @@ function render(){
   const html={
     intro:renderIntro,question:renderQuestion,loading:renderLoading,
     ki_nachfrage:renderKiNachfrage,ki_insight:renderKiInsight,preview:renderPreview,
+    freitext:renderFreitext,
   }[s.type];
   document.getElementById('screen-content').innerHTML=html?html(s):'';
   window.scrollTo({top:0,behavior:'smooth'});
@@ -417,7 +424,7 @@ function renderIntro(){
       </svg>
     </div>
     <h1>Finden Sie in 5 Minuten heraus,<br><em>wo Ihr Betrieb Zeit verliert.</em></h1>
-    <p>Unser KI-gestützter Prozess-Check analysiert Ihre Abläufe nach der Lean-Methodik und liefert einen konkreten Maßnahmenplan.</p>
+    <p>Unser KI-gestützter Prozess-Check analysiert Ihre Abläufe anhand Ihrer tatsächlichen Antworten und liefert einen konkreten Maßnahmenplan.</p>
     <div class="intro-meta">
       <span>⏱ Ca. 5 Minuten</span>
       <span>🔒 Kostenlos & unverbindlich</span>
@@ -498,7 +505,9 @@ function renderKiInsight(s){
 function renderPreview(){
   const s=state.scores;const ki=state.kiAnalyse;
   if(!s||!ki)return `<div class="loading-screen"><div class="spinner"></div><p>Lade Auswertung…</p></div>`;
-  const bars=Object.entries(s.handlungsbedarf).sort(([,a],[,b])=>b-a).map(([b,v])=>{
+  const sortedBlocks=Object.entries(s.handlungsbedarf).sort(([,a],[,b])=>b-a);
+  const topBlock=sortedBlocks[0];
+  const bars=sortedBlocks.map(([b,v])=>{
     const c=v>=70?'var(--red)':v>=40?'var(--yellow)':'var(--green)';
     return `<div class="preview-bar-row">
       <div class="preview-bar-label">${BLOCK_INFO[b].icon} ${BLOCK_INFO[b].titel}</div>
@@ -515,17 +524,45 @@ function renderPreview(){
     <div class="big-num">${s.zeitverlustGesamt.toFixed(1)} <span style="font-size:1.3rem;font-weight:400">h</span></div>
     <div style="font-size:0.82rem;color:rgba(255,255,255,0.6);margin-top:6px">entspricht ca. ${Math.round(s.kostenJahr).toLocaleString('de-DE')} € pro Jahr</div>
   </div>
-  <div class="section-header"><h3>Handlungsbedarf nach Bereichen</h3><p style="font-size:0.8rem">Basierend auf strategischer Bedeutung, Verbesserungswürdigkeit und -fähigkeit</p></div>
+  <div class="section-header"><h3>Wo liegt der größte Handlungsbedarf?</h3><p style="font-size:0.8rem">Alle 5 Bereiche Ihres Betriebs — priorisiert nach Dringlichkeit und Verbesserungspotenzial</p></div>
   <div class="preview-scores">${bars}</div>
   <p class="preview-teaser">${ki.teaser}</p>
   <div class="email-gate">
     <h3>Ihren vollständigen Maßnahmenplan erhalten</h3>
-    <p>Muda-Profil, Reifegrad-Auswertung und Top-3-Maßnahmenplan — kostenlos als PDF.</p>
+    <p>Ihr Betrieb verliert ca. ${s.zeitverlustGesamt.toFixed(1)} h/Woche — das sind ~${Math.round(s.kostenJahr).toLocaleString('de-DE')} € pro Jahr.<br>
+    Die 3 konkreten Maßnahmen, die bei Ihnen die meiste Zeit zurückbringen, stehen im vollständigen Plan.</p>
     <div class="email-form">
       <input type="email" id="email-input" placeholder="ihre@email.de" />
       <button class="btn btn-primary" onclick="submitEmail()">Meinen Plan erhalten →</button>
     </div>
     <p class="email-privacy">Keine Werbung, kein Abo. Nur Ihr persönliches Ergebnis.</p>
+  </div>`;
+}
+
+function renderFreitext(s){
+  const prompts={
+    E0:'Was ist in den letzten Wochen mindestens dreimal passiert, wo Sie gedacht haben: "Das muss doch einfacher gehen"?',
+    B1:'Denken Sie an eine Anfrage aus den letzten zwei Wochen, die mehr Zeit als erwartet gekostet hat. Was ist passiert?',
+    B2:'Bei welchem Angebot zuletzt haben Sie sich geärgert — und was war das Problem?',
+    B3:'Gab es kürzlich ein Projekt oder einen Auftrag, der länger gedauert hat als geplant? Was war der Grund?',
+    B4:'Welche Rechnung hat Sie zuletzt am meisten Aufwand gekostet — und warum?',
+    B5:'An welchen Kunden denken Sie, wenn Sie hören: "Die haben sich schon länger nicht mehr gemeldet"?',
+  };
+  const fieldKey=s.ftype==='E0'?'E0_freitext':`B${s.ftype.replace('B','')}_freitext`;
+  const currentVal=state.answers[fieldKey]||'';
+  return `<div style="text-align:center;margin-bottom:20px">
+    <p style="font-size:0.85rem;color:var(--gray);text-transform:uppercase;letter-spacing:0.5px">Kurze Frage</p>
+  </div>
+  <div class="question-card">
+    <h2 style="font-size:1.15rem;margin-bottom:16px">${prompts[s.ftype]}</h2>
+    <textarea id="freitext-input" placeholder="Optional — je konkreter Sie antworten, desto genauer wird Ihre Analyse"
+      maxlength="200" style="width:100%;height:90px;padding:12px;border:1px solid var(--border);border-radius:8px;
+      font-family:inherit;font-size:0.95rem;resize:vertical">${currentVal}</textarea>
+    <div style="font-size:0.75rem;color:var(--gray);margin-top:8px;text-align:right">${currentVal.length}/200</div>
+    <div style="display:flex;gap:12px;margin-top:20px">
+      <button class="btn" onclick="window.nextScreen()">Überspringen →</button>
+      <button class="btn btn-primary" onclick="window.saveFreitext('${fieldKey}')">Weiter →</button>
+    </div>
   </div>`;
 }
 
@@ -547,6 +584,12 @@ window.toggleMulti=function(qid,idx,max){
   const already=cur.find(o=>o.label===opt.label);
   state.answers[qid]=already?cur.filter(o=>o.label!==opt.label):(cur.length<max?[...cur,opt]:cur);
   render();
+};
+
+window.saveFreitext=function(fieldKey){
+  const val=document.getElementById('freitext-input').value.trim();
+  state.answers[fieldKey]=val;
+  nextScreen();
 };
 
 window.selKiNach=function(block,idx){
@@ -589,7 +632,8 @@ async function callKiNachfrage(block){
   const e=getEinstieg();
   const r=await fetch('/api/ki-nachfrage',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({branche:e.branche,mitarbeiter:e.mitarbeiter,schwerpunkte:e.schwerpunkte,
-      ausstattung:state.answers.E4||[],blockNr:block,blockAntworten:getBlockAntworten(block)})});
+      ausstattung:state.answers.E4||[],blockNr:block,blockAntworten:getBlockAntworten(block),
+      E0_freitext:state.answers.E0_freitext||'',blockFreitext:state.answers[`B${block}_freitext`]||''})});
   state.kiNachfragen[block]=await r.json();
 }
 
@@ -600,7 +644,8 @@ async function callKiInsight(block){
     body:JSON.stringify({branche:e.branche,mitarbeiter:e.mitarbeiter,blockNr:block,
       blockTitel:BLOCK_INFO[block].titel,blockAntworten:getBlockAntworten(block),
       kiNachfrageAntwort:state.kiNachfrageAnswers[block],blockScore:sc.blockScores[block],
-      zeitverlust:sc.zeitverluste[block]})});
+      zeitverlust:sc.zeitverluste[block],E0_freitext:state.answers.E0_freitext||'',
+      blockFreitext:state.answers[`B${block}_freitext`]||''})});
   state.kiInsights[block]=await r.json();
   if(block===5)state.analysePromise=callKiAnalyse();
 }
@@ -608,10 +653,13 @@ async function callKiInsight(block){
 async function callKiAnalyse(){
   const e=getEinstieg();
   const sc=berechneAlleScores(state.answers,e);state.scores=sc;
+  const blockFreitexte={1:state.answers.B1_freitext||'',2:state.answers.B2_freitext||'',
+    3:state.answers.B3_freitext||'',4:state.answers.B4_freitext||'',5:state.answers.B5_freitext||''};
   const r=await fetch('/api/ki-analyse',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({branche:e.branche,mitarbeiter:e.mitarbeiter,schwerpunkte:e.schwerpunkte,
       ausstattung:state.answers.E4||[],alleAntworten:state.answers,scores:sc,
-      kiInsights:state.kiInsights,zeitverlustGesamt:sc.zeitverlustGesamt,kostenJahr:sc.kostenJahr})});
+      kiInsights:state.kiInsights,zeitverlustGesamt:sc.zeitverlustGesamt,kostenJahr:sc.kostenJahr,
+      E0_freitext:state.answers.E0_freitext||'',blockFreitexte})});
   state.kiAnalyse=await r.json();
 }
 

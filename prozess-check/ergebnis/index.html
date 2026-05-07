@@ -208,10 +208,15 @@ function buildHTML(d){
     </div>
   </div>
 
+  ${ki.dringlichkeit ? `<div style="background:rgba(232, 121, 58, 0.1);border-left:4px solid var(--orange);padding:16px;margin:24px 0;border-radius:6px">
+    <div style="font-weight:600;color:var(--orange);margin-bottom:8px">⚡ Dringlichkeit</div>
+    <div style="font-size:0.95rem;color:var(--text);line-height:1.6">${ki.dringlichkeit.text||''}</div>
+  </div>` : ''}
+
   <!-- Modell 1: Handlungsbedarf -->
   <div class="section">
-    <div class="section-title">Wo liegt der größte Hebel?</div>
-    <div class="section-sub">Scoring nach Prozessportfolio-Methodik: strategische Bedeutung (30%), Verbesserungswürdigkeit (50%), Verbesserungsfähigkeit (20%)</div>
+    <div class="section-title">Wo liegt der größte Handlungsbedarf?</div>
+    <div class="section-sub">Alle 5 Bereiche Ihres Betriebs — priorisiert nach Dringlichkeit und Verbesserungspotenzial</div>
     ${Object.entries(hb).sort(([,a],[,b])=>b-a).map(([b,v])=>{
       const c=v>=70?'var(--red)':v>=40?'var(--yellow)':'var(--green)';
       return `<div class="hb-row">
@@ -224,15 +229,15 @@ function buildHTML(d){
 
   <!-- Modell 2: Muda Radar -->
   <div class="section">
-    <div class="section-title">Welche Verschwendungsarten dominieren bei Ihnen?</div>
-    <div class="section-sub">Analyse nach 7 Muda (Lean / Toyota Produktionssystem) — je größer die Fläche, desto mehr Verschwendung in dieser Kategorie</div>
+    <div class="section-title">Welche Zeitdiebe kosten Sie am meisten?</div>
+    <div class="section-sub">7 typische Ursachen für Prozessverluste — je größer der Bereich, desto mehr Zeit verlieren Sie dort</div>
     <div class="chart-wrap"><canvas id="muda-radar" height="300"></canvas></div>
   </div>
 
   <!-- Modell 3: DZE -->
   <div class="section">
-    <div class="section-title">Wie viel Ihrer Arbeitszeit ist produktiv?</div>
-    <div class="section-sub">Durchlaufzeiteffizienz (DZE) = produktive Bearbeitungszeit / gesamte Durchlaufzeit (Dumas et al. S. 299). Typisch in administrativen Prozessen: 10–25%.</div>
+    <div class="section-title">Wie viel Ihrer Arbeitszeit ist wirklich produktiv?</div>
+    <div class="section-sub">Anteil der wertschöpfenden Arbeit pro Bereich — der Rest ist Warten, Suchen und Nacharbeiten</div>
     <div class="dze-legend">
       <span><span class="dze-dot" style="background:var(--green)"></span>Produktive Arbeit</span>
       <span><span class="dze-dot" style="background:#FFD6D6"></span>Wartezeit & Verschwendung</span>
@@ -250,8 +255,8 @@ function buildHTML(d){
 
   <!-- Modell 4: Reifegrad -->
   <div class="section">
-    <div class="section-title">Wo steht Ihr Betrieb auf der Reifegrad-Skala?</div>
-    <div class="section-sub">Angelehnt an CMMI. Gefüllte Balken = aktueller Stand. Gestrichelt = realistisches Ziel in 12 Monaten.</div>
+    <div class="section-title">Wie digital ist Ihr Betrieb aufgestellt?</div>
+    <div class="section-sub">Stand heute (gefüllt) und realistisches Ziel für die nächsten 12 Monate (gestrichelt)</div>
     ${buildReifegrad(rg)}
   </div>
 
@@ -269,24 +274,9 @@ function buildHTML(d){
     <div class="ki-text-block">${ki.gesamteinschaetzung||''}</div>
   </div>
 
-  <!-- Methodik -->
-  <div class="section">
-    <div class="methodik-box">
-      <div style="font-size:0.85rem;font-weight:600;color:var(--navy);margin-bottom:6px">Methodische Grundlage</div>
-      <div style="font-size:0.8rem;color:var(--text-sec);line-height:1.6">Diese Analyse basiert auf anerkannten Methoden des Geschäftsprozessmanagements (BPM). Die Ergebnisse sind Orientierungswerte — keine Unternehmensberatungsleistung.</div>
-      <div class="methodik-tags">
-        <span class="methodik-tag">BPM-Lebenszyklus (Dumas et al. 2021)</span>
-        <span class="methodik-tag">7 Muda (Toyota Produktionssystem)</span>
-        <span class="methodik-tag">Durchlaufzeiteffizienz</span>
-        <span class="methodik-tag">Prozessportfolio-Scoring</span>
-        <span class="methodik-tag">CMMI Reifegrade</span>
-      </div>
-    </div>
-  </div>
-
   <!-- CTA -->
   <div class="cta-box">
-    <h2>Möchten Sie besprechen, welche Maßnahme am meisten bringt?</h2>
+    <h2>${Object.entries(hb).sort(([,a],[,b])=>b-a)[0] ? `${BLOCK_INFO[Object.entries(hb).sort(([,a],[,b])=>b-a)[0][0]].titel} ist Ihr dringlichster Bereich.` : 'Bereit für den nächsten Schritt?'}</h2>
     <p>30 Minuten. Unverbindlich. Kein Verkaufsgespräch. Nur Klarheit darüber, was für Ihren Betrieb Sinn macht.</p>
     <a href="mailto:hallo@pronecto.de?subject=Prozess-Check Erstgespräch" class="btn btn-primary btn-lg">Kostenloses Erstgespräch →</a>
     <p style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-top:12px">Oder schreiben Sie direkt: hallo@pronecto.de</p>

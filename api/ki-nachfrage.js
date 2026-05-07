@@ -27,24 +27,28 @@ TONALITÄT:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { branche, mitarbeiter, schwerpunkte, ausstattung, blockNr, blockAntworten, alleAntworten } = req.body;
+  const { branche, mitarbeiter, schwerpunkte, ausstattung, blockNr, blockAntworten, alleAntworten, E0_freitext, blockFreitext } = req.body;
   if (!branche || !blockNr || !blockAntworten) return res.status(400).json({ error: 'Fehlende Parameter' });
 
   const branchenkontext = getBranchenkontext(branche);
 
   const userPrompt = `KONTEXT DES LEADS:
-- Branche: ${branche}
-- Mitarbeiter: ${mitarbeiter}
-- Schwerpunkte: ${JSON.stringify(schwerpunkte)}
-- Digitale Ausstattung: ${JSON.stringify(ausstattung)}
+- Betriebsgröße: ${mitarbeiter}
 - Block ${blockNr} Antworten: ${JSON.stringify(blockAntworten)}
+${E0_freitext ? `\nHauptproblem des Leads (eigene Worte): "${E0_freitext}"` : ''}
+${blockFreitext ? `\nKonkrete Situation (O-Ton): "${blockFreitext}"` : ''}
 
-BRANCHENSPEZIFISCHES VOKABULAR:
+BRANCHENSPEZIFISCHES VOKABULAR (nur als Orientierung):
 ${branchenkontext}
 
-AUFGABE: Generiere eine Vertiefungsfrage basierend auf den Kernfragen-Antworten dieses Blocks.
-Die Frage soll den schwächsten Punkt vertiefen, als Multiple-Choice mit 3-4 Optionen,
-branchenspezifisch formuliert, NICHT nach Selbsteinschätzung fragen sondern nach konkretem Verhalten.
+AUFGABE: Generiere eine Vertiefungsfrage basierend auf den Antworten und der persönlichen Situation des Leads.
+Die Frage soll als Multiple-Choice mit 3-4 Optionen, konkrete Folgefragen zu dem aufwerfen, was der Lead beschrieben hat.
+${blockFreitext ? 'Die Frage soll sich auf die beschriebene Situation beziehen.' : ''}
+
+WICHTIG:
+- Keine generischen Fragen — beziehe dich auf die PERSÖNLICHE Situation des Leads
+- Nicht "Als [Branche]..." sondern auf konkrete Antworten und Freitexte aufbauen
+- Frage nach konkretem Verhalten, nicht nach Selbsteinschätzung
 
 Antworte NUR als gültiges JSON ohne Markdown:
 {"frage":"...","optionen":["...","...","..."],"muda_mapping":{"0":["M1"],"1":["M4"]},"scoring":{"0":20,"1":50,"2":80}}`;

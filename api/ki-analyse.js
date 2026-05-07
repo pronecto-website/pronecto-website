@@ -24,45 +24,60 @@ TONALITÄT:
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  const { branche, mitarbeiter, schwerpunkte, ausstattung, alleAntworten, scores, kiInsights, zeitverlustGesamt, kostenJahr } = req.body;
+  const { branche, mitarbeiter, schwerpunkte, ausstattung, alleAntworten, scores, kiInsights, zeitverlustGesamt, kostenJahr, E0_freitext, blockFreitexte } = req.body;
   if (!branche || !alleAntworten || !scores) return res.status(400).json({ error: 'Fehlende Parameter' });
 
   const branchenkontext = getBranchenkontext(branche);
+  const kostenProWoche = kostenJahr ? Math.round(kostenJahr / 48) : 0;
 
   const userPrompt = `KONTEXT DES LEADS:
-- Branche: ${branche}
-- Mitarbeiter: ${mitarbeiter}
-- Schwerpunkte: ${JSON.stringify(schwerpunkte)}
-- Digitale Ausstattung: ${JSON.stringify(ausstattung)}
+- Betriebsgröße: ${mitarbeiter}
 - Berechnete Scores: ${JSON.stringify(scores)}
 - KI-Insights aus den Blöcken: ${JSON.stringify(kiInsights)}
 - Geschätzter Gesamtzeitverlust: ${zeitverlustGesamt ? zeitverlustGesamt.toFixed(1) + 'h/Woche' : 'n/a'}
 - Hochgerechnete Kosten/Jahr: ${kostenJahr ? Math.round(kostenJahr) + '€' : 'n/a'}
+- Kosten pro Woche: ~${kostenProWoche}€
 
-BRANCHENSPEZIFISCHES VOKABULAR:
+EIGENE WORTE DES LEADS:
+${E0_freitext ? `- Hauptproblem: "${E0_freitext}"` : '- (nicht angegeben)'}
+${Object.entries(blockFreitexte || {}).filter(([, v]) => v).map(([b, t]) => `- Block ${b}: "${t}"`).join('\n') || '- (keine)'}
+
+BRANCHENSPEZIFISCHES VOKABULAR (nur als Orientierung):
 ${branchenkontext}
 
 AUFGABE: Generiere:
-1. Teaser-Text für Vorschau (2-3 Sätze, enthält die wichtigste Erkenntnis + Zahl)
-2. Top-3 Maßnahmenplan mit Ist/Soll/Ersparnis/Aufwandskategorie — sortiert nach Aufwand (quick_win zuerst)
-3. Fließtext-Gesamteinschätzung (5-8 Sätze, umfasst alle Bereiche, keine Wiederholung des Teasers)
-4. Eine prägnante Headline-Kennzahl (auffälligste Zahl aus der Analyse)
+1. Teaser-Text (2-3 Sätze, wichtigste Erkenntnis + Zahl)
+2. Top-3 Maßnahmenplan — sortiert nach Aufwand (quick_win zuerst)
+3. Fließtext-Gesamteinschätzung (5-8 Sätze, umfasst alle Bereiche)
+4. Headline-Kennzahl (auffälligste Zahl)
+5. Dringlichkeitsaussage (1-2 Sätze: Kosten pro Woche + Timeline bis Quick Win)
+
+WICHTIG:
+${E0_freitext ? `- Der Lead hat sein Problem selbst so beschrieben: "${E0_freitext}". Beziehe dich darauf in der gesamteinschaetzung.` : ''}
+- Baue die Analyse um die persönliche Situation des Leads, nicht um die Branche.
+- Die gesamteinschaetzung sollte so klingen, als sprichst du mit DIESER Person, nicht mit einer Zielgruppe.
+- Kein Satz darf generisch oder austauschbar sein.
 
 Antworte NUR als gültiges JSON ohne Markdown:
 {
   "teaser": "...",
   "massnahmen": [
     {
-      "bereich": "Angebotserstellung",
-      "ist": "Jedes Angebot wird manuell in Word erstellt — ca. 45 Min pro Stück",
-      "soll": "Angebotsvorlagen in Branchensoftware, Erstellung in unter 10 Min",
+      "bereich": "...",
+      "ist": "...",
+      "soll": "...",
       "ersparnis_h_woche": 3.5,
-      "aufwand": "quick_win",
-      "beschreibung": "Erstellen Sie drei Angebotsvorlagen für Ihre häufigsten Auftragstypen..."
+      "aufwand": "quick_win|mittelfristig|strategisch",
+      "beschreibung": "..."
     }
   ],
   "gesamteinschaetzung": "...",
-  "headline_stat": {"label": "Zeitverlust pro Woche", "wert": "12", "einheit": "Stunden"}
+  "headline_stat": {"label": "...", "wert": "...", "einheit": "..."},
+  "dringlichkeit": {
+    "text": "Jede weitere Woche kostet Ihren Betrieb ca. ${kostenProWoche}€. Die Quick Wins sind in 1-2 Wochen umsetzbar.",
+    "wochen_bis_quick_win": 1,
+    "ersparnis_quick_win_h": 2.5
+  }
 }`;
 
   try {
