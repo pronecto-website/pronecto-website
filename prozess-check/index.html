@@ -579,7 +579,7 @@ async function triggerLoading(s){
   try{
     if(s.api==='nachfrage')await callKiNachfrage(s.block);
     else if(s.api==='insight')await callKiInsight(s.block);
-    else if(s.api==='analyse')await callKiAnalyse();
+    else if(s.api==='analyse')await(state.analysePromise||callKiAnalyse());
   }catch(e){console.error('API:',e);}
   clearInterval(t);
   nextScreen();
@@ -602,6 +602,7 @@ async function callKiInsight(block){
       kiNachfrageAntwort:state.kiNachfrageAnswers[block],blockScore:sc.blockScores[block],
       zeitverlust:sc.zeitverluste[block]})});
   state.kiInsights[block]=await r.json();
+  if(block===5)state.analysePromise=callKiAnalyse();
 }
 
 async function callKiAnalyse(){
