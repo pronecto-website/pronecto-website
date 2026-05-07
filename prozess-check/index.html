@@ -146,12 +146,13 @@ import { berechneAlleScores } from '/js/scoring.js';
 
 const FRAGEN = {
   E1: {
-    type:'single', frage:'In welcher Branche sind Sie tätig?',
+    type:'single', frage:'Was beschreibt Ihren Betrieb am besten?',
+    subtext:'Damit wir die richtigen Begriffe und Beispiele für Ihre Analyse verwenden.',
     optionen:[
-      {label:'Handwerk (Dachdecker, Maurer, Gerüstbau, etc.)',value:'handwerk'},
-      {label:'Elektrotechnik (Installation, Wartung, Prüfungen)',value:'elektro'},
-      {label:'Autohaus (Verkauf, Werkstatt, Service)',value:'autohaus'},
-      {label:'Andere Branche',value:'andere'},
+      {label:'Handwerk, Bau oder technische Ausführung',value:'handwerk'},
+      {label:'Elektrotechnik, Installation oder Prüfungen',value:'elektro'},
+      {label:'Autohaus, Werkstatt oder Kfz-Handel',value:'autohaus'},
+      {label:'Anderes Dienstleistungs- oder Serviceunternehmen',value:'andere'},
     ],
   },
   E2:{
@@ -442,8 +443,9 @@ function renderQuestion(s){
   const tag=s.block?`<div class="q-block-tag">${BLOCK_INFO[s.block].icon} Block ${s.block}/5 — ${BLOCK_INFO[s.block].titel}</div>`:'';
   const sel=state.answers[s.qid];
   const opts=q.optionen.map((o,i)=>`<button class="option-btn${sel?.label===o.label?' selected':''}" onclick="selOpt('${s.qid}',${i})">${o.label}</button>`).join('');
+  const sub=q.subtext?`<div class="multi-hint">${q.subtext}</div>`:'';
   const hint=q.hinweis?`<div class="q-hinweis">${q.hinweis}</div>`:'';
-  return `${tag}<div class="q-title">${q.frage}</div>${hint}<div class="options">${opts}</div>`;
+  return `${tag}<div class="q-title">${q.frage}</div>${sub}${hint}<div class="options">${opts}</div>`;
 }
 
 function renderMulti(s,q){
